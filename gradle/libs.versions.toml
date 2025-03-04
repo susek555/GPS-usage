@@ -10,7 +10,8 @@ activityCompose = "1.10.1"
 composeBom = "2024.04.01"
 googleLocation = "21.3.0"
 serialization = "1.7.3"
-appcompat = "1.6.1"
+appcompat = "1.7.0"
+datetime = "0.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,7 +30,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 google-location = { name = "play-services-location", group = "com.google.android.gms", version.ref = "googleLocation" }
 serialization-json = { name = "kotlinx-serialization-json", group = "org.jetbrains.kotlinx", version.ref = "serialization" }
-androidx-appcompat = {name = "appcompat", group = "androidx.appcompat", version.ref = "appcompat"}
+androidx-appcompat = { name = "appcompat", group = "androidx.appcompat", version.ref = "appcompat"}
+kotlinx-datetime = { name = "kotlinx-datetime", group = "org.jetbrains.kotlinx", version.ref = "datetime"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

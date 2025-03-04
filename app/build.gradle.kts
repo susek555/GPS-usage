@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.gps_usage"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -60,4 +60,5 @@ dependencies {
     implementation(libs.google.location)
     implementation(libs.serialization.json)
     implementation(libs.androidx.appcompat)
+    implementation(libs.kotlinx.datetime)
 }

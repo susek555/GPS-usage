@@ -3,11 +3,9 @@ package com.gps_usage.showCoordinates
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import com.gps_usage.showCoordinates.data.LocationResponse
 import kotlinx.coroutines.delay
@@ -28,6 +26,8 @@ class ShowCoordinates(getLocationSystem: () -> LocationResponse) {
 
         var latitude by remember { mutableDoubleStateOf(0.0) }
         var longitude by remember { mutableDoubleStateOf(0.0)}
+        var date by remember { mutableStateOf(LocalDate.now()) }
+        var time by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
 
         Box(
             modifier = Modifier
@@ -51,6 +51,18 @@ class ShowCoordinates(getLocationSystem: () -> LocationResponse) {
                     .align(Alignment.Center)
                     .offset(x = 0.dp, y = 30.dp)
             )
+            Text(
+                text = "Date : $date",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = 0.dp, y = 60.dp)
+            )
+            Text(
+                text = "Time : $time",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = 0.dp, y = 100.dp)
+            )
         }
 
 
@@ -60,6 +72,7 @@ class ShowCoordinates(getLocationSystem: () -> LocationResponse) {
 
                 latitude = result.coordinates!!.latitude
                 longitude = result.coordinates!!.longitude
+                date =
 
                 delay(1000)
             }
