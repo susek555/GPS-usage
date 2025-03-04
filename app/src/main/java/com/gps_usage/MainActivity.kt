@@ -1,16 +1,16 @@
 package com.gps_usage
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.gps_usage.showCoordinates.CoordinatesActivity
 import com.gps_usage.showCoordinates.ShowCoordinates
 import com.gps_usage.ui.theme.GPSusageTheme
 
@@ -27,13 +27,24 @@ class MainActivity : ComponentActivity() {
 //                    )
 //                }
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    ShowCoordinates()
+                    StartShowCoordinatesScreen { openCoordinatesActivity() }
                 }
             }
         }
     }
 
+    private fun openCoordinatesActivity() {
+        val intent = Intent(this, CoordinatesActivity::class.java)
+        startActivity(intent)
+    }
 }
+
+
+@Composable
+fun StartShowCoordinatesScreen(openCoordinatesActivity: () -> Unit){
+    ShowCoordinates(openCoordinatesActivity).RunApp()
+}
+
 
 
 

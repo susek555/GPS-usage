@@ -1,16 +1,24 @@
 package com.gps_usage.showCoordinates
 
-class ShowCoordinates() {
-    var activity: ShowCoordinatesActivity = ShowCoordinatesActivity()
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 
-    fun runApp() {
-        while (true) {
-            var result: isLocationDateSuccessful = activity.getCurrentLocation()
+class ShowCoordinates(openCoordinatesActivity: () -> Unit) {
+    init {
+        openCoordinatesActivity()
+    }
 
-            if (result == isLocationDateSuccessful.NO_PERMISSIONS) {
 
-            }
-        }
+    @Composable
+    fun RunApp() {
+        Text("Started app")
+
+//        LaunchedEffect(Unit) {
+//            while (true) {
+//                val result: isLocationDateSuccessful = activity.getCurrentLocation()
+//                delay(1000)
+//            }
+//        }
     }
 
 }

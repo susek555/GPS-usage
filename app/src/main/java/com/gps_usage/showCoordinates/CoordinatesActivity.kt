@@ -6,19 +6,21 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.provider.Settings
+import com.gps_usage.R
 
-class ShowCoordinatesActivity: AppCompatActivity() {
-    var fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+class CoordinatesActivity: AppCompatActivity() {
+    private var fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
     var latitude: Double = 0.0
     var longitude: Double = 0.0
 
-    fun getCurrentLocation(): isLocationDateSuccessful {
+    fun getCurrentLocation(): isLocationDataSuccessful {
         if(checkPermissions()) {
             if(isLocationEnabled()) {
 
@@ -31,7 +33,7 @@ class ShowCoordinatesActivity: AppCompatActivity() {
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestPermissions()
-                    return isLocationDateSuccessful.NO_PERMISSIONS
+                    return isLocationDataSuccessful.NO_PERMISSIONS
                 }
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
                     val location: Location?=task.result
@@ -44,16 +46,16 @@ class ShowCoordinatesActivity: AppCompatActivity() {
                     }
                 }
 
-                return isLocationDateSuccessful.SUCCESS
+                return isLocationDataSuccessful.SUCCESS
             } else {
                 Toast.makeText(this, "Turn on location", Toast.LENGTH_SHORT).show()
                 val intent= Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
-                return isLocationDateSuccessful.LOCATION_OFF
+                return isLocationDataSuccessful.LOCATION_OFF
             }
         } else {
             requestPermissions()
-            return isLocationDateSuccessful.REQUESTED_FOR_PERMISSIONS
+            return isLocationDataSuccessful.REQUESTED_FOR_PERMISSIONS
         }
     }
 

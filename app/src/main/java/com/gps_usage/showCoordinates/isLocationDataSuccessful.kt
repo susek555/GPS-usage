@@ -1,6 +1,6 @@
 package com.gps_usage.showCoordinates
 
-enum class isLocationDateSuccessful {
+enum class isLocationDataSuccessful {
     SUCCESS,
     NO_PERMISSIONS,
     REQUESTED_FOR_PERMISSIONS,
