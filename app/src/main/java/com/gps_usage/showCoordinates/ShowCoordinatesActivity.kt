@@ -1,8 +1,10 @@
 package com.gps_usage.showCoordinates
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -13,13 +15,35 @@ import android.provider.Settings
 
 class ShowCoordinatesActivity: AppCompatActivity() {
     var fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-    var latitude: Float = 0f
-    var longitude: Float = 0f
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
 
     fun getCurrentLocation(): isLocationDateSuccessful {
         if(checkPermissions()) {
             if(isLocationEnabled()) {
-                //TODO get location
+
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions()
+                    return isLocationDateSuccessful.NO_PERMISSIONS
+                }
+                fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){ task ->
+                    val location: Location?=task.result
+                    if(location == null){
+                        Toast.makeText(this, "Null received", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Get successful", Toast.LENGTH_SHORT).show()
+                        latitude = location.latitude
+                        longitude = location.longitude
+                    }
+                }
+
                 return isLocationDateSuccessful.SUCCESS
             } else {
                 Toast.makeText(this, "Turn on location", Toast.LENGTH_SHORT).show()
@@ -29,7 +53,7 @@ class ShowCoordinatesActivity: AppCompatActivity() {
             }
         } else {
             requestPermissions()
-            return isLocationDateSuccessful.SUCCESS
+            return isLocationDateSuccessful.REQUESTED_FOR_PERMISSIONS
         }
     }
 
