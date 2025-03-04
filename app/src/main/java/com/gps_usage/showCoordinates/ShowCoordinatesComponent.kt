@@ -12,15 +12,16 @@ class ShowCoordinatesComponent(context: Context) {
     var longitude: Float = 0f
     var permissionContext: Context = context
 
-    fun getCurrentLocation() {
+    fun getCurrentLocation(): isLocationDateSuccessful {
         if(checkPermissions()) {
             if(isLocationEnabled()) {
-                // get location
+                //TODO get location
+                return isLocationDateSuccessful.SUCCESS
             } else {
-                // return result
+                return isLocationDateSuccessful.LOCATION_OFF
             }
         } else {
-            // return result
+            return isLocationDateSuccessful.NO_PERMISSIONS
         }
     }
 
@@ -48,6 +49,7 @@ class ShowCoordinatesComponent(context: Context) {
     }
 
     private fun isLocationEnabled(): Boolean {
-
+        //TODO
+        return false
     }
 }
