@@ -1,13 +1,11 @@
 package com.gps_usage.showCoordinates
 
-import android.content.Context
-
-class ShowCoordinates(context: Context) {
-    var component: ShowCoordinatesComponent = ShowCoordinatesComponent(context)
+class ShowCoordinates() {
+    var activity: ShowCoordinatesActivity = ShowCoordinatesActivity()
 
     fun runApp() {
         while (true) {
-            var result: isLocationDateSuccessful = component.getCurrentLocation()
+            var result: isLocationDateSuccessful = activity.getCurrentLocation()
 
             if (result == isLocationDateSuccessful.NO_PERMISSIONS) {
 

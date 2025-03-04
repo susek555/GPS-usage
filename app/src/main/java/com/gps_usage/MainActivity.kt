@@ -27,12 +27,15 @@ class MainActivity : ComponentActivity() {
 //                    )
 //                }
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    ShowCoordinates(this)
+                    ShowCoordinates()
                 }
             }
         }
     }
+
 }
+
+
 
 //@Composable
 //fun Greeting(name: String, modifier: Modifier = Modifier) {

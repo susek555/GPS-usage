@@ -1,16 +1,17 @@
 package com.gps_usage.showCoordinates
 
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-class ShowCoordinatesComponent(context: Context) {
-    var fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+class ShowCoordinatesActivity: AppCompatActivity() {
+    var fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
     var latitude: Float = 0f
     var longitude: Float = 0f
-    var permissionContext: Context = context
 
     fun getCurrentLocation(): isLocationDateSuccessful {
         if(checkPermissions()) {
@@ -32,12 +33,12 @@ class ShowCoordinatesComponent(context: Context) {
     private fun checkPermissions(): Boolean {
         return (
             ActivityCompat.checkSelfPermission(
-                permissionContext,
+                this,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
             &&
             ActivityCompat.checkSelfPermission(
-                permissionContext,
+                this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
 //            &&
@@ -48,8 +49,23 @@ class ShowCoordinatesComponent(context: Context) {
         )
     }
 
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            PERMISSION_REQUEST_ACCESS_LOCATION
+        )
+    }
+
+
+
     private fun isLocationEnabled(): Boolean {
         //TODO
         return false
     }
+
+
 }

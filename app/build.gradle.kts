@@ -59,4 +59,5 @@ dependencies {
 
     implementation(libs.google.location)
     implementation(libs.serialization.json)
+    implementation(libs.androidx.appcompat)
 }
