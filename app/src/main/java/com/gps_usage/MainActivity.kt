@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.gps_usage.showCoordinates.CoordinatesActivity
 import com.gps_usage.showCoordinates.ShowCoordinates
 import com.gps_usage.showCoordinates.data.Coordinates
 import com.gps_usage.showCoordinates.data.LocationResponse
@@ -28,8 +27,13 @@ import com.gps_usage.showCoordinates.data.isLocationDataSuccessful
 import com.gps_usage.ui.theme.GPSusageTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
         enableEdgeToEdge()
         setContent {
             GPSusageTheme {
@@ -48,7 +52,6 @@ class MainActivity : ComponentActivity() {
 
     // GPS RESPONSIBILITY
 
-    private var fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
     private var response: isLocationDataSuccessful = isLocationDataSuccessful.UNKNOWN_ERROR
@@ -75,7 +78,7 @@ class MainActivity : ComponentActivity() {
                     } else {
                         Toast.makeText(this, "Get successful", Toast.LENGTH_SHORT).show()
                         latitude = location.latitude
-                        longitude = location.latitude
+                        longitude = location.longitude
                         response = isLocationDataSuccessful.SUCCESS
                     }
 

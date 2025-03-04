@@ -25,7 +25,6 @@ class ShowCoordinates(getLocationSystem: () -> LocationResponse) {
 
     @Composable
     fun RunApp() {
-        Text("Started app")
 
         var latitude by remember { mutableDoubleStateOf(0.0) }
         var longitude by remember { mutableDoubleStateOf(0.0)}
@@ -34,6 +33,12 @@ class ShowCoordinates(getLocationSystem: () -> LocationResponse) {
             modifier = Modifier
                 .fillMaxSize()
         ){
+            Text(
+                text = "LOCATION:",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(x = 0.dp, y = (-100).dp)
+            )
             Text(
                 text = "Latitude = $latitude",
                 modifier = Modifier
