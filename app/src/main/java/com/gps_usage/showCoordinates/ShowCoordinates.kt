@@ -1,5 +1,7 @@
 package com.gps_usage.showCoordinates
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -16,21 +18,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.gps_usage.Location.LocationService
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-class ShowCoordinates(getLocationSystem: () -> LocationResponse) {
-    private val getLocation = getLocationSystem
+class ShowCoordinates(
+    private val context: Context,
+    private val startService: (Intent) -> Unit) {
 
     @Composable
     fun RunApp() {
 
         var latitude by remember { mutableDoubleStateOf(0.0) }
-        var longitude by remember { mutableDoubleStateOf(0.0)}
+        var longitude by remember { mutableDoubleStateOf(0.0) }
         var date by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date) }
         var time by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
+        var isLocationServiceOn by remember {mutableStateOf(false) }
 
         Box(
             modifier = Modifier
@@ -66,20 +70,46 @@ class ShowCoordinates(getLocationSystem: () -> LocationResponse) {
                     .align(Alignment.TopCenter)
                     .offset(x = 0.dp, y = 100.dp)
             )
-        }
 
-
-        LaunchedEffect(Unit) {
-            while (true) {
-                val result: LocationResponse = getLocation()
-
-                latitude = result.coordinates!!.latitude
-                longitude = result.coordinates!!.longitude
-                date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-                time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
-
-                delay(1000)
+            if (isLocationServiceOn) {
+                StopButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(x = 0.dp, y = (-30).dp),
+                    onClick = {
+                        Intent(context, LocationService::class.java).apply {
+                            action = LocationService.ACTION_STOP
+                            startService(this)
+                        }
+                    }
+                )
+            } else {
+                StartButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(x = 0.dp, y = (-30).dp),
+                    onClick = {
+                        Intent(context, LocationService::class.java).apply {
+                            action = LocationService.ACTION_START
+                            startService(this)
+                        }
+                    }
+                )
             }
         }
+
+
+//        LaunchedEffect(Unit) {
+//            while (true) {
+//                val result: LocationResponse = getLocation()
+//
+//                latitude = result.coordinates!!.latitude
+//                longitude = result.coordinates!!.longitude
+//                date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+//                time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+//
+//                delay(1000)
+//            }
+//        }
     }
 }

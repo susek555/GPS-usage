@@ -40,7 +40,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             GPSusageTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    StartShowCoordinatesScreen { getCurrentLocation() }
+                    StartShowCoordinatesScreen(
+                        context = this,
+                        startService = { intent ->
+                            startServiceHelper(intent)
+                        }
+                    )
                 }
             }
         }
@@ -152,10 +157,20 @@ class MainActivity : ComponentActivity() {
 //                        locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 //                )
 //    }
+
+    private fun startServiceHelper(intent: Intent) {
+        startService(intent)
+    }
 }
 
 
 @Composable
-fun StartShowCoordinatesScreen(getLocation: () -> LocationResponse){
-    ShowCoordinates(getLocation).RunApp()
+fun StartShowCoordinatesScreen(
+    context: Context,
+    startService: (Intent) -> Unit
+){
+    ShowCoordinates(
+        context = context,
+        startService = startService
+    ).RunApp()
 }
