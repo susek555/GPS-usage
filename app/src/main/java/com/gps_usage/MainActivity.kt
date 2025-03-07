@@ -117,6 +117,11 @@ class MainActivity : ComponentActivity() {
                     android.Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
                 )
+                &&
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestPermissions() {
@@ -124,7 +129,8 @@ class MainActivity : ComponentActivity() {
             this,
             arrayOf(
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.POST_NOTIFICATIONS
             ),
             0
         )
