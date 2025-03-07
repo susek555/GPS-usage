@@ -17,8 +17,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class ShowCoordinatesViewModel(
-    private val context: Context,
-    private val startService: (Intent) -> Unit
+    private val locationService: LocationService
 ): ViewModel() {
 
     private val _latitude = MutableStateFlow(0.0)

@@ -27,8 +27,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class ShowCoordinates(
-    private val context: Context,
-    private val startService: (Intent) -> Unit
+    private val locationService: LocationService
 ) {
 
     private lateinit var viewModel: ViewModel
@@ -39,8 +38,7 @@ class ShowCoordinates(
             factory = object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return ShowCoordinatesViewModel(
-                        context = context,
-                        startService = startService
+                        locationService
                     ) as T
                 }
             }
