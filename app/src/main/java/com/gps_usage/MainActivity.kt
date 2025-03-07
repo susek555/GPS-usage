@@ -1,12 +1,15 @@
 package com.gps_usage
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -18,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.gps_usage.Location.LocationService
@@ -30,26 +34,19 @@ import com.gps_usage.ui.theme.GPSusageTheme
 class MainActivity : ComponentActivity() {
 
     private lateinit var locationService: LocationService
-    private var mBound: Boolean = false
+    private var isLocationServiceBound: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    //LOCATION SERVICE
 
-        while (!checkPermissions()) {
-            requestPermissions()
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
+            val binder = service as LocationService.LocationBinder
+            locationService = binder.getService()
+            isLocationServiceBound = true
         }
-        enableEdgeToEdge()
-        setContent {
-            GPSusageTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-//                    StartShowCoordinatesScreen(
-//                        context = this,
-//                        startService = { intent ->
-//                            startServiceHelper(intent)
-//                        }
-//                    )
-                }
-            }
+
+        override fun onServiceDisconnected(className: ComponentName?) {
+            isLocationServiceBound = false
         }
     }
 
@@ -96,9 +93,42 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    //LOCATION SERVICE
+    //MAIN
 
+    override fun onStart() {
+        super.onStart()
+        Intent(this, LocationService::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        while (!checkPermissions()) {
+            requestPermissions()
+        }
+        enableEdgeToEdge()
+        setContent {
+            GPSusageTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
+//                    StartShowCoordinatesScreen(
+//                        context = this,
+//                        startService = { intent ->
+//                            startServiceHelper(intent)
+//                        }
+//                    )
+                    // locationService.start() or sth to call
+                }
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        isLocationServiceBound = false
+    }
 }
 
 
