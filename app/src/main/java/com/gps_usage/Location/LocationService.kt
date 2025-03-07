@@ -22,6 +22,8 @@ class LocationService: Service() {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: LocationClient
 
+
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -52,7 +54,7 @@ class LocationService: Service() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         locationClient
-            .getLocationUpdates(10000L)
+            .getLocationUpdates(5000L)
             .catch {e -> e.printStackTrace() }
             .onEach { location ->
                 val latitude = location.latitude.toString()

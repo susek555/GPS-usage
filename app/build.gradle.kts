@@ -61,4 +61,5 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.androidx.appcompat)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }
