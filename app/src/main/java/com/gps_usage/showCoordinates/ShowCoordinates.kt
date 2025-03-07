@@ -75,24 +75,26 @@ class ShowCoordinates(
                 StopButton(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .offset(x = 0.dp, y = (-30).dp),
+                        .offset(x = 0.dp, y = (-100).dp),
                     onClick = {
                         Intent(context, LocationService::class.java).apply {
                             action = LocationService.ACTION_STOP
                             startService(this)
                         }
+                        isLocationServiceOn = false
                     }
                 )
             } else {
                 StartButton(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .offset(x = 0.dp, y = (-30).dp),
+                        .offset(x = 0.dp, y = (-100).dp),
                     onClick = {
                         Intent(context, LocationService::class.java).apply {
                             action = LocationService.ACTION_START
                             startService(this)
                         }
+                        isLocationServiceOn = true
                     }
                 )
             }
