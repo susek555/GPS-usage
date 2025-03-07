@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gps_usage.Location.LocationService
 import kotlinx.datetime.Clock
@@ -27,19 +28,24 @@ import kotlinx.datetime.toLocalDateTime
 
 class ShowCoordinates(
     private val context: Context,
-    private val startService: (Intent) -> Unit) {
+    private val startService: (Intent) -> Unit
+) {
 
     private lateinit var viewModel: ViewModel
 
     @Composable
     fun RunApp() {
-        viewModel = viewModel<ShowCoordinatesViewModel>()
+        viewModel = viewModel<ShowCoordinatesViewModel>(
+            factory = object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return ShowCoordinatesViewModel(
+                        context = context,
+                        startService = startService
+                    ) as T
+                }
+            }
+        )
 
-        var latitude by remember { mutableDoubleStateOf(0.0) }
-        var longitude by remember { mutableDoubleStateOf(0.0) }
-        var date by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date) }
-        var time by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
-        var isLocationServiceOn by remember {mutableStateOf(false) }
 
         Box(
             modifier = Modifier
@@ -95,11 +101,7 @@ class ShowCoordinates(
                         .align(Alignment.BottomCenter)
                         .offset(x = 0.dp, y = (-100).dp),
                     onClick = {
-                        Intent(context, LocationService::class.java).apply {
-                            action = LocationService.ACTION_START
-                            startService(this)
-                        }
-                        isLocationServiceOn = true
+                        viewModel.startLocationService()
                     }
                 )
             }

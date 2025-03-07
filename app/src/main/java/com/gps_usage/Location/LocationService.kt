@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
@@ -21,11 +22,14 @@ class LocationService: Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: LocationClient
+    private val binder = LocationBinder()
 
+    inner class LocationBinder: Binder() {
+        fun getService(): LocationService = this@LocationService
+    }
 
-
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
+    override fun onBind(intent: Intent?): IBinder {
+        return binder
     }
 
     override fun onCreate() {
@@ -36,13 +40,13 @@ class LocationService: Service() {
         )
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action){
-            ACTION_START -> start()
-            ACTION_STOP -> stop()
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
+//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+//        when(intent?.action){
+//            ACTION_START -> start()
+//            ACTION_STOP -> stop()
+//        }
+//        return super.onStartCommand(intent, flags, startId)
+//    }
 
     private fun start() {
         val notification = NotificationCompat.Builder(this, "location")
