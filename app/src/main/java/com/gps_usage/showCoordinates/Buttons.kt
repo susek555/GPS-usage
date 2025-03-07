@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,7 +44,11 @@ fun StartButton(
     RoundButton(
         onClick = onClick,
         modifier = modifier,
-        content = { Icons.Filled.LocationOn },
+        content = { Icon(
+            imageVector = Icons.Filled.LocationOn,
+            contentDescription = "Start GPS",
+            modifier = Modifier.size(50.dp)
+        ) },
         color = ButtonColors( Color.Green, Color.Black, Color.Green, Color.Black)
     )
 }
@@ -56,7 +61,11 @@ fun StopButton(
     RoundButton(
         onClick = onClick,
         modifier = modifier,
-        content = { Icons.Filled.Close },
+        content = { Icon(
+            imageVector = Icons.Filled.Close,
+            contentDescription = "Stop GPS",
+            modifier = Modifier.size(50.dp)
+        ) },
         color = ButtonColors( Color.Red, Color.Black, Color.Red, Color.Black)
     )
 }
