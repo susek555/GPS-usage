@@ -124,6 +124,16 @@ class MainActivity : ComponentActivity() {
                 ) == PackageManager.PERMISSION_GRANTED
     }
 
+
+    //TODO use it
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//        ActivityCompat.requestPermissions(
+//            this,
+//            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+//            101
+//        )
+//    }
+
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,

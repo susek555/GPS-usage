@@ -33,6 +33,8 @@ fun RoundButton(
     }
 }
 
+//TODO fix icons
+
 @Composable
 fun StartButton(
     modifier: Modifier,
