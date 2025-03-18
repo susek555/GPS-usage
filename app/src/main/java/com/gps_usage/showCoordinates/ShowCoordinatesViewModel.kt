@@ -17,25 +17,25 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class ShowCoordinatesViewModel(
-    private val locationService: LocationService
+//    private val locationService: LocationService
 ): ViewModel() {
 
-    private val _latitude = MutableStateFlow(0.0)
-    val latitude: StateFlow<Double> get() = _latitude
-
-    private val _longitude = MutableStateFlow(0.0)
-    val longitude: StateFlow<Double> get() = _longitude
-
-    private val _isLocationServiceOn = MutableStateFlow(false)
-    val isLocationServiceOn: StateFlow<Boolean> get() = _isLocationServiceOn
-
-    fun startLocationService() {
-        Intent(context, LocationService::class.java).apply {
-            action = LocationService.ACTION_START
-            startService(this)
-        }
-        _isLocationServiceOn.value = true
-    }
+//    private val _latitude = MutableStateFlow(0.0)
+//    val latitude: StateFlow<Double> get() = _latitude
+//
+//    private val _longitude = MutableStateFlow(0.0)
+//    val longitude: StateFlow<Double> get() = _longitude
+//
+//    private val _isLocationServiceOn = MutableStateFlow(false)
+//    val isLocationServiceOn: StateFlow<Boolean> get() = _isLocationServiceOn
+//
+//    fun startLocationService() {
+//        Intent(context, LocationService::class.java).apply {
+//            action = LocationService.ACTION_START
+//            startService(this)
+//        }
+//        _isLocationServiceOn.value = true
+//    }
 
 //    var latitude by remember { mutableDoubleStateOf(0.0) }
 //    var longitude by remember { mutableDoubleStateOf(0.0) }

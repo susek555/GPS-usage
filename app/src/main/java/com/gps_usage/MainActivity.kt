@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.location.Location
@@ -25,16 +26,20 @@ import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.gps_usage.Location.LocationService
+import com.gps_usage.showCoordinates.LocationReceiver
 import com.gps_usage.showCoordinates.ShowCoordinates
 import com.gps_usage.showCoordinates.data.Coordinates
 import com.gps_usage.showCoordinates.data.LocationResponse
 import com.gps_usage.showCoordinates.data.isLocationDataSuccessful
 import com.gps_usage.ui.theme.GPSusageTheme
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var locationService: LocationService
     private var isLocationServiceBound: Boolean = false
+
+    private val locationReceiver = LocationReceiver()
 
     //LOCATION SERVICE
 
@@ -43,6 +48,8 @@ class MainActivity : ComponentActivity() {
             val binder = service as LocationService.LocationBinder
             locationService = binder.getService()
             isLocationServiceBound = true
+
+            Toast.makeText(this@MainActivity, "Service is running", Toast.LENGTH_SHORT).show()
         }
 
         override fun onServiceDisconnected(className: ComponentName?) {
@@ -98,6 +105,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         Intent(this, LocationService::class.java).also { intent ->
+//            startService(intent)
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
     }
@@ -108,6 +116,12 @@ class MainActivity : ComponentActivity() {
         while (!checkPermissions()) {
             requestPermissions()
         }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            locationReceiver,
+            IntentFilter("LOCATION_UPDATED")
+        )
+
         enableEdgeToEdge()
         setContent {
             GPSusageTheme {
@@ -118,7 +132,18 @@ class MainActivity : ComponentActivity() {
 //                            startServiceHelper(intent)
 //                        }
 //                    )
-                    // locationService.start() or sth to call
+//                     locationService.start() or sth to call
+                    Intent(this, LocationService::class.java).apply {
+            action = LocationService.ACTION_START
+            startService(this)
+        }
+                    println("abracadabra")
+                    if (isLocationServiceBound) {
+                        Toast.makeText(this, "Service is running", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Service is not running", Toast.LENGTH_SHORT).show()
+                    }
+                    //TODO fix no notifications
                 }
             }
         }
@@ -129,16 +154,21 @@ class MainActivity : ComponentActivity() {
         unbindService(connection)
         isLocationServiceBound = false
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(locationReceiver)
+    }
 }
 
 
-@Composable
-fun StartShowCoordinatesScreen(
-    context: Context,
-    startService: (Intent) -> Unit
-){
-    ShowCoordinates(
-        context = context,
-        startService = startService
-    ).RunApp()
-}
+//@Composable
+//fun StartShowCoordinatesScreen(
+//    context: Context,
+//    startService: (Intent) -> Unit
+//){
+//    ShowCoordinates(
+//        context = context,
+//        startService = startService
+//    ).RunApp()
+//}

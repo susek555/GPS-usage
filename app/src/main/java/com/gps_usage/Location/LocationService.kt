@@ -17,6 +17,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class LocationService: Service() {
 
@@ -40,13 +41,13 @@ class LocationService: Service() {
         )
     }
 
-//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        when(intent?.action){
-//            ACTION_START -> start()
-//            ACTION_STOP -> stop()
-//        }
-//        return super.onStartCommand(intent, flags, startId)
-//    }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when(intent?.action){
+            ACTION_START -> start()
+            ACTION_STOP -> stop()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
 
     private fun start() {
         val notification = NotificationCompat.Builder(this, "location")
@@ -66,6 +67,13 @@ class LocationService: Service() {
                 val updatedNotification = notification
                     .setContentText("Location: $latitude, $longitude")
                 notificationManager.notify(1, updatedNotification.build())
+
+                val intent = Intent("LOCATION_UPDATED").apply {
+                    putExtra("latitude", latitude)
+                    putExtra("longitude", longitude)
+                }
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+
             }
             .launchIn(serviceScope)
         startForeground(1, notification.build())

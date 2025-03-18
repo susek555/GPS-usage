@@ -30,80 +30,80 @@ class ShowCoordinates(
     private val locationService: LocationService
 ) {
 
-    private lateinit var viewModel: ViewModel
-
-    @Composable
-    fun RunApp() {
-        viewModel = viewModel<ShowCoordinatesViewModel>(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ShowCoordinatesViewModel(
-                        locationService
-                    ) as T
-                }
-            }
-        )
-
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ){
-            Text(
-                text = "LOCATION:",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(x = 0.dp, y = (-100).dp)
-            )
-            Text(
-                text = "Latitude = $latitude",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(x = 0.dp, y = (-30).dp)
-            )
-            Text(
-                text = "Longitude = $longitude",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(x = 0.dp, y = 30.dp)
-            )
-            Text(
-                text = "Date : $date",
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(x = 0.dp, y = 60.dp)
-            )
-            Text(
-                text = "Time : $time",
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(x = 0.dp, y = 100.dp)
-            )
-
-            if (isLocationServiceOn) {
-                StopButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(x = 0.dp, y = (-100).dp),
-                    onClick = {
-                        Intent(context, LocationService::class.java).apply {
-                            action = LocationService.ACTION_STOP
-                            startService(this)
-                        }
-                        isLocationServiceOn = false
-                    }
-                )
-            } else {
-                StartButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(x = 0.dp, y = (-100).dp),
-                    onClick = {
-                        viewModel.startLocationService()
-                    }
-                )
-            }
-        }
+//    private lateinit var viewModel: ViewModel
+//
+//    @Composable
+//    fun RunApp() {
+//        viewModel = viewModel<ShowCoordinatesViewModel>(
+//            factory = object : ViewModelProvider.Factory {
+//                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//                    return ShowCoordinatesViewModel(
+//                        locationService
+//                    ) as T
+//                }
+//            }
+//        )
+//
+//
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//        ){
+//            Text(
+//                text = "LOCATION:",
+//                modifier = Modifier
+//                    .align(Alignment.Center)
+//                    .offset(x = 0.dp, y = (-100).dp)
+//            )
+//            Text(
+//                text = "Latitude = $latitude",
+//                modifier = Modifier
+//                    .align(Alignment.Center)
+//                    .offset(x = 0.dp, y = (-30).dp)
+//            )
+//            Text(
+//                text = "Longitude = $longitude",
+//                modifier = Modifier
+//                    .align(Alignment.Center)
+//                    .offset(x = 0.dp, y = 30.dp)
+//            )
+//            Text(
+//                text = "Date : $date",
+//                modifier = Modifier
+//                    .align(Alignment.TopCenter)
+//                    .offset(x = 0.dp, y = 60.dp)
+//            )
+//            Text(
+//                text = "Time : $time",
+//                modifier = Modifier
+//                    .align(Alignment.TopCenter)
+//                    .offset(x = 0.dp, y = 100.dp)
+//            )
+//
+//            if (isLocationServiceOn) {
+//                StopButton(
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter)
+//                        .offset(x = 0.dp, y = (-100).dp),
+//                    onClick = {
+//                        Intent(context, LocationService::class.java).apply {
+//                            action = LocationService.ACTION_STOP
+//                            startService(this)
+//                        }
+//                        isLocationServiceOn = false
+//                    }
+//                )
+//            } else {
+//                StartButton(
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter)
+//                        .offset(x = 0.dp, y = (-100).dp),
+//                    onClick = {
+//                        viewModel.startLocationService()
+//                    }
+//                )
+//            }
+//        }
 
 
 //        LaunchedEffect(Unit) {
@@ -118,5 +118,5 @@ class ShowCoordinates(
 //                delay(1000)
 //            }
 //        }
-    }
+//    }
 }
