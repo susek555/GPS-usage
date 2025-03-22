@@ -19,10 +19,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import kotlinx.coroutines.isActive
 
 class LocationService: Service() {
 
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: LocationClient
     private val binder = LocationBinder()
 
@@ -51,6 +52,10 @@ class LocationService: Service() {
     }
 
     private fun start() {
+        if (serviceScope.isActive.not()) {
+            serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        }
+
         val notification = NotificationCompat.Builder(this, "location")
             .setContentTitle("Tracking route...")
             .setContentText("Location: null")
