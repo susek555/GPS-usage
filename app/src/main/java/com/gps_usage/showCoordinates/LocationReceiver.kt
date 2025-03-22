@@ -12,7 +12,7 @@ class LocationReceiver: BroadcastReceiver() {
             val latitude = intent.getStringExtra("latitude")
             val longitude = intent.getStringExtra("longitude")
             println("New location received: $latitude, $longitude")
-            Toast.makeText(context, "Location: $latitude, $longitude", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "Location: $latitude, $longitude", Toast.LENGTH_SHORT).show()
         }
     }
 }

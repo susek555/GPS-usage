@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import com.gps_usage.showCoordinates.data.LocationResponse
 import kotlinx.coroutines.delay
@@ -27,96 +28,77 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class ShowCoordinates(
-    private val locationService: LocationService
+    private val startLocationService: () -> Unit,
+    private val stopLocationService: () -> Unit
 ) {
 
-//    private lateinit var viewModel: ViewModel
-//
-//    @Composable
-//    fun RunApp() {
-//        viewModel = viewModel<ShowCoordinatesViewModel>(
-//            factory = object : ViewModelProvider.Factory {
-//                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//                    return ShowCoordinatesViewModel(
-//                        locationService
-//                    ) as T
-//                }
-//            }
-//        )
-//
-//
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//        ){
-//            Text(
-//                text = "LOCATION:",
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .offset(x = 0.dp, y = (-100).dp)
-//            )
-//            Text(
-//                text = "Latitude = $latitude",
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .offset(x = 0.dp, y = (-30).dp)
-//            )
-//            Text(
-//                text = "Longitude = $longitude",
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .offset(x = 0.dp, y = 30.dp)
-//            )
-//            Text(
-//                text = "Date : $date",
-//                modifier = Modifier
-//                    .align(Alignment.TopCenter)
-//                    .offset(x = 0.dp, y = 60.dp)
-//            )
-//            Text(
-//                text = "Time : $time",
-//                modifier = Modifier
-//                    .align(Alignment.TopCenter)
-//                    .offset(x = 0.dp, y = 100.dp)
-//            )
-//
-//            if (isLocationServiceOn) {
-//                StopButton(
-//                    modifier = Modifier
-//                        .align(Alignment.BottomCenter)
-//                        .offset(x = 0.dp, y = (-100).dp),
-//                    onClick = {
-//                        Intent(context, LocationService::class.java).apply {
-//                            action = LocationService.ACTION_STOP
-//                            startService(this)
-//                        }
-//                        isLocationServiceOn = false
-//                    }
-//                )
-//            } else {
-//                StartButton(
-//                    modifier = Modifier
-//                        .align(Alignment.BottomCenter)
-//                        .offset(x = 0.dp, y = (-100).dp),
-//                    onClick = {
-//                        viewModel.startLocationService()
-//                    }
-//                )
-//            }
-//        }
+    private val viewModel: ShowCoordinatesViewModel = ShowCoordinatesViewModel()
 
+    @Composable
+    fun RunApp() {
+        val isServiceRunning by viewModel.isLocationServiceOn.collectAsState()
 
-//        LaunchedEffect(Unit) {
-//            while (true) {
-//                val result: LocationResponse = getLocation()
-//
-//                latitude = result.coordinates!!.latitude
-//                longitude = result.coordinates!!.longitude
-//                date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-//                time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
-//
-//                delay(1000)
-//            }
-//        }
-//    }
+        val latitude by viewModel.latitude.collectAsState()
+        val longitude by viewModel.longitude.collectAsState()
+        val date by viewModel.date.collectAsState()
+        val time by viewModel.time.collectAsState()
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ){
+            Text(
+                text = "LOCATION:",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(x = 0.dp, y = (-100).dp)
+            )
+            Text(
+                text = "Latitude = $latitude",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(x = 0.dp, y = (-30).dp)
+            )
+            Text(
+                text = "Longitude = $longitude",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(x = 0.dp, y = 30.dp)
+            )
+            Text(
+                text = "Date : $date",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = 0.dp, y = 60.dp)
+            )
+            Text(
+                text = "Time : $time",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = 0.dp, y = 100.dp)
+            )
+
+            if (isServiceRunning) {
+                StopButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(x = 0.dp, y = (-100).dp),
+                    onClick = {
+                        stopLocationService()
+                        viewModel.setIsLocationServiceOn(false)
+                    }
+                )
+            } else {
+                StartButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(x = 0.dp, y = (-100).dp),
+                    onClick = {
+                        startLocationService()
+                        viewModel.setIsLocationServiceOn(true)
+                    }
+                )
+            }
+        }
+    }
 }

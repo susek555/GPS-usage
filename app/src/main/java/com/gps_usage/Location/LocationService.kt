@@ -7,6 +7,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Binder
 import android.os.IBinder
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.gps_usage.R
@@ -77,11 +78,16 @@ class LocationService: Service() {
             }
             .launchIn(serviceScope)
         startForeground(1, notification.build())
+
+        Toast.makeText(this, "Location updates started (inside service)", Toast.LENGTH_SHORT).show()
     }
 
     private fun stop() {
+        serviceScope.cancel()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+
+        Toast.makeText(this, "Location updates stopped (inside service)", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {

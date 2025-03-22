@@ -57,6 +57,27 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+//    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+//        val manager = getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+//        return manager.getRunningServices(Int.MAX_VALUE).any { it.service.className == serviceClass.name }
+//    }
+
+    private fun startLocationService() {
+//        if (!isServiceRunning(LocationService::class.java)) {
+            Intent(this, LocationService::class.java).apply {
+                action = LocationService.ACTION_START
+                startService(this)
+            }
+//        }
+    }
+
+    private fun stopLocationService() {
+        Intent(this, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            startService(this)
+        }
+    }
+
     //PERMISSIONS RESPONSIBILITY
 
     private fun checkPermissions(): Boolean {
@@ -126,18 +147,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             GPSusageTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-//                    StartShowCoordinatesScreen(
-//                        context = this,
-//                        startService = { intent ->
-//                            startServiceHelper(intent)
-//                        }
-//                    )
-//                     locationService.start() or sth to call
-                    Intent(this, LocationService::class.java).apply {
-            action = LocationService.ACTION_START
-            startService(this)
-        }
-                    println("abracadabra")
+                    StartShowCoordinatesScreen(
+                        startService = { startLocationService() },
+                        stopService = { stopLocationService() }
+                    )
+
                     if (isLocationServiceBound) {
                         Toast.makeText(this, "Service is running", Toast.LENGTH_SHORT).show()
                     } else {
@@ -151,24 +165,27 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        unbindService(connection)
-        isLocationServiceBound = false
+        if (isLocationServiceBound) {
+            unbindService(connection)
+            isLocationServiceBound = false
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(locationReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationReceiver)
+        stopLocationService()
     }
 }
 
 
-//@Composable
-//fun StartShowCoordinatesScreen(
-//    context: Context,
-//    startService: (Intent) -> Unit
-//){
-//    ShowCoordinates(
-//        context = context,
-//        startService = startService
-//    ).RunApp()
-//}
+@Composable
+fun StartShowCoordinatesScreen(
+    startService: () -> Unit,
+    stopService: () -> Unit
+){
+    ShowCoordinates(
+        startLocationService = startService,
+        stopLocationService = stopService
+    ).RunApp()
+}
