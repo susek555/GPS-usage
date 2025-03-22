@@ -33,6 +33,8 @@ import com.gps_usage.showCoordinates.data.LocationResponse
 import com.gps_usage.showCoordinates.data.isLocationDataSuccessful
 import com.gps_usage.ui.theme.GPSusageTheme
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.gps_usage.showCoordinates.di.locationModule
+import org.koin.core.context.GlobalContext.startKoin
 
 class MainActivity : ComponentActivity() {
 
@@ -142,6 +144,10 @@ class MainActivity : ComponentActivity() {
             locationReceiver,
             IntentFilter("LOCATION_UPDATED")
         )
+
+        startKoin{
+            modules(locationModule)
+        }
 
         enableEdgeToEdge()
         setContent {

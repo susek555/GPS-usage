@@ -63,4 +63,5 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.localbroadcastmanager)
+    implementation(libs.koin.android)
 }

@@ -1,15 +1,6 @@
 package com.gps_usage.showCoordinates
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.gps_usage.Location.LocationService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.Clock
@@ -17,9 +8,13 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class ShowCoordinatesViewModel(
-): ViewModel() {
+): ViewModel(), KoinComponent {
+
+    private val locationRepository: LocationRepository by inject()
 
     private val _latitude = MutableStateFlow(0.0)
     val latitude: StateFlow<Double> get() = _latitude
@@ -39,18 +34,4 @@ class ShowCoordinatesViewModel(
     fun setIsLocationServiceOn(new: Boolean) {
         _isLocationServiceOn.value = new
     }
-
-//    fun startLocationService() {
-//        Intent(context, LocationService::class.java).apply {
-//            action = LocationService.ACTION_START
-//            startService(this)
-//        }
-//        _isLocationServiceOn.value = true
-//    }
-
-//    var latitude by remember { mutableDoubleStateOf(0.0) }
-//    var longitude by remember { mutableDoubleStateOf(0.0) }
-//    var date by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date) }
-//    var time by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time) }
-//    var isLocationServiceOn by remember { mutableStateOf(false) }
 }
