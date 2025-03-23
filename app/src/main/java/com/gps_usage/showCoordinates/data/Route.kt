@@ -1,10 +1,15 @@
 package com.gps_usage.showCoordinates.data
 
+import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 
+@Entity(
+    tableName = "routes"
+)
 data class Route(
     @PrimaryKey(autoGenerate = true)
-    val id: Long? = null,
+    val id: Long = 0,
     val name: String,
-    val points: List<Point>
+    val numberOfPoints: Long
 )
