@@ -19,13 +19,16 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.gps_usage.showCoordinates.LocationRepository
 import kotlinx.coroutines.isActive
+import org.koin.android.ext.android.inject
 
 class LocationService: Service() {
 
     private var serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: LocationClient
     private val binder = LocationBinder()
+    private val repository: LocationRepository by inject()
 
     inner class LocationBinder: Binder() {
         fun getService(): LocationService = this@LocationService
@@ -74,11 +77,12 @@ class LocationService: Service() {
                     .setContentText("Location: $latitude, $longitude")
                 notificationManager.notify(1, updatedNotification.build())
 
-                val intent = Intent("LOCATION_UPDATED").apply {
-                    putExtra("latitude", latitude)
-                    putExtra("longitude", longitude)
-                }
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+//                val intent = Intent("LOCATION_UPDATED").apply {
+//                    putExtra("latitude", latitude)
+//                    putExtra("longitude", longitude)
+//                }
+//                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                repository.updateLocation(location.latitude, location.longitude)
 
             }
             .launchIn(serviceScope)

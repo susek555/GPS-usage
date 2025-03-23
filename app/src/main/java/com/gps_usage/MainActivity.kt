@@ -26,7 +26,7 @@ import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.gps_usage.Location.LocationService
-import com.gps_usage.showCoordinates.LocationReceiver
+//import com.gps_usage.showCoordinates.LocationReceiver
 import com.gps_usage.showCoordinates.ShowCoordinates
 import com.gps_usage.showCoordinates.data.Coordinates
 import com.gps_usage.showCoordinates.data.LocationResponse
@@ -40,8 +40,6 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var locationService: LocationService
     private var isLocationServiceBound: Boolean = false
-
-    private val locationReceiver = LocationReceiver()
 
     //LOCATION SERVICE
 
@@ -140,11 +138,6 @@ class MainActivity : ComponentActivity() {
             requestPermissions()
         }
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            locationReceiver,
-            IntentFilter("LOCATION_UPDATED")
-        )
-
         startKoin{
             modules(locationModule)
         }
@@ -179,7 +172,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationReceiver)
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationReceiver)
         stopLocationService()
     }
 }

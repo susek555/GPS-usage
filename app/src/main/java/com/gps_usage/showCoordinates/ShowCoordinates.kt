@@ -36,17 +36,17 @@ class ShowCoordinates(
 
     @Composable
     fun RunApp() {
-        val isServiceRunning by viewModel.isLocationServiceOn.collectAsState()
+        val isServiceRunning by viewModel.isLocationServiceOn.collectAsState(initial = false)
 
-        val latitude by viewModel.latitude.collectAsState()
-        val longitude by viewModel.longitude.collectAsState()
-        val date by viewModel.date.collectAsState()
-        val time by viewModel.time.collectAsState()
+        val location by viewModel.coordinatesFlow.collectAsState(initial = Pair(0.0, 0.0))
+        val (latitude, longitude) = location
+
+        val date by viewModel.date.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
+        val time by viewModel.time.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ){
+            modifier = Modifier.fillMaxSize()
+        ) {
             Text(
                 text = "LOCATION:",
                 modifier = Modifier
