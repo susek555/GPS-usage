@@ -77,13 +77,7 @@ class LocationService: Service() {
                     .setContentText("Location: $latitude, $longitude")
                 notificationManager.notify(1, updatedNotification.build())
 
-//                val intent = Intent("LOCATION_UPDATED").apply {
-//                    putExtra("latitude", latitude)
-//                    putExtra("longitude", longitude)
-//                }
-//                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
                 repository.updateLocation(location.latitude, location.longitude)
-
             }
             .launchIn(serviceScope)
         startForeground(1, notification.build())
