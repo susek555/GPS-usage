@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun RoundButton(
@@ -32,7 +31,6 @@ fun RoundButton(
     holdDuration: Int = 2000
 ) {
     var isPressed by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     var progress by remember { mutableFloatStateOf(0f) }
 
     LaunchedEffect(isPressed) {
