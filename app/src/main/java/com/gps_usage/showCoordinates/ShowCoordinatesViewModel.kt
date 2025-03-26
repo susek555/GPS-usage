@@ -1,10 +1,16 @@
 package com.gps_usage.showCoordinates
 
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gps_usage.showCoordinates.data.Point
+import com.gps_usage.showCoordinates.data.PointsDao
+import com.gps_usage.showCoordinates.data.Route
+import com.gps_usage.showCoordinates.data.RoutesDao
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,7 +25,10 @@ import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class ShowCoordinatesViewModel : ViewModel(), KoinComponent {
+class ShowCoordinatesViewModel(
+    private val pointsDao: PointsDao,
+    private val routesDao: RoutesDao
+) : ViewModel(), KoinComponent {
 
     private val repository: LocationRepository by inject()
 
@@ -35,12 +44,35 @@ class ShowCoordinatesViewModel : ViewModel(), KoinComponent {
     private val _isLocationServiceOn = MutableSharedFlow<Boolean>(replay = 1)
     val isLocationServiceOn: SharedFlow<Boolean> get() = _isLocationServiceOn
 
+    private lateinit var currentRoute: MutableState<Route>
+
     init {
+        // handle incoming location data
         viewModelScope.launch {
             repository.locationFlow.collect { (latitude, longitude) ->
                 _coordinatesFlow.emit(Pair(latitude, longitude))
                 _date.emit(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
                 _time.emit(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
+
+                // add point to database
+                val newPoint = Point(
+                    routeId = currentRoute.value.id,
+                    longitude = longitude,
+                    latitude = latitude,
+                    time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+                addPointToDatabase(newPoint)
+            }
+        }
+
+        // handle incoming service state change
+        viewModelScope.launch{
+            isLocationServiceOn.collect { newValue ->
+                if(newValue) {
+                    startNewRoute()
+                } else {
+                    stopRoute()
+                }
             }
         }
     }
@@ -49,5 +81,17 @@ class ShowCoordinatesViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             _isLocationServiceOn.emit(new)
         }
+    }
+
+    suspend fun addPointToDatabase(point: Point) {
+        //TODO
+    }
+
+    suspend fun startNewRoute(){
+        //TODO
+    }
+
+    suspend fun stopRoute(){
+        //TODO
     }
 }
