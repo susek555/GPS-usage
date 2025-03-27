@@ -18,8 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import com.gps_usage.Location.LocationService
-//import com.gps_usage.showCoordinates.LocationReceiver
-import com.gps_usage.showCoordinates.ShowCoordinates
+import com.gps_usage.showCoordinates.ShowCoordinatesScreen
 import com.gps_usage.ui.theme.GPSusageTheme
 import com.gps_usage.showCoordinates.di.locationModule
 import org.koin.core.context.GlobalContext.startKoin
@@ -134,9 +133,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             GPSusageTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    StartShowCoordinatesScreen(
-                        startService = { startLocationService() },
-                        stopService = { stopLocationService() }
+                    ShowCoordinatesScreen(
+                        startLocationService = { startLocationService() },
+                        stopLocationService = { stopLocationService() }
                     )
 
                     if (isLocationServiceBound) {
@@ -144,7 +143,6 @@ class MainActivity : ComponentActivity() {
                     } else {
                         Toast.makeText(this, "Service is not running", Toast.LENGTH_SHORT).show()
                     }
-                    //TODO fix no notifications
                 }
             }
         }
@@ -166,13 +164,13 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@Composable
-fun StartShowCoordinatesScreen(
-    startService: () -> Unit,
-    stopService: () -> Unit
-){
-    ShowCoordinates(
-        startLocationService = startService,
-        stopLocationService = stopService
-    ).RunApp()
-}
+//@Composable
+//fun StartShowCoordinatesScreen(
+//    startService: () -> Unit,
+//    stopService: () -> Unit
+//){
+//    ShowCoordinatesScreen(
+//        startLocationService = startService,
+//        stopLocationService = stopService
+//    )
+//}

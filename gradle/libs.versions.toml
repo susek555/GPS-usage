@@ -16,7 +16,7 @@ lifecycleViewmodel = "2.8.7"
 localbroadcastmanager = "1.1.0"
 koin-android = "4.0.1"
 room = "2.6.1"
-ksp = "1.9.0-1.0.13"
+ksp = "2.0.0-1.0.22"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,8 +40,9 @@ kotlinx-datetime = { name = "kotlinx-datetime", group = "org.jetbrains.kotlinx",
 androidx-lifecycle-viewmodel-compose = { name = "lifecycle-viewmodel-compose", group = "androidx.lifecycle", version.ref = "lifecycleViewmodel"}
 androidx-localbroadcastmanager = { name = "localbroadcastmanager", group = "androidx.localbroadcastmanager", version.ref = "localbroadcastmanager"}
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin-android" }
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 
 [plugins]

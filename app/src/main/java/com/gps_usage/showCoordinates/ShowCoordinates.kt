@@ -26,78 +26,84 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-class ShowCoordinates(
-    private val startLocationService: () -> Unit,
-    private val stopLocationService: () -> Unit
+@Composable
+fun ShowCoordinatesScreen(
+    startLocationService: () -> Unit,
+    stopLocationService: () -> Unit,
+    viewModel: ShowCoordinatesViewModel = viewModel()
 ) {
+    val isServiceRunning by viewModel.isLocationServiceOn.collectAsState()
 
-    private val viewModel: ShowCoordinatesViewModel = ShowCoordinatesViewModel()
+    val location by viewModel.coordinatesFlow.collectAsState(initial = Pair(0.0, 0.0))
+    val (latitude, longitude) = location
 
-    @Composable
-    fun RunApp() {
-        val isServiceRunning by viewModel.isLocationServiceOn.collectAsState(initial = false)
+    val date by viewModel.date.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
+    val time by viewModel.time.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
 
-        val location by viewModel.coordinatesFlow.collectAsState(initial = Pair(0.0, 0.0))
-        val (latitude, longitude) = location
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(
+            text = "LOCATION:",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(x = 0.dp, y = (-100).dp)
+        )
+        Text(
+            text = "Latitude = $latitude",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(x = 0.dp, y = (-30).dp)
+        )
+        Text(
+            text = "Longitude = $longitude",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(x = 0.dp, y = 30.dp)
+        )
+        Text(
+            text = "Date : $date",
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(x = 0.dp, y = 60.dp)
+        )
+        Text(
+            text = "Time : $time",
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(x = 0.dp, y = 100.dp)
+        )
 
-        val date by viewModel.date.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
-        val time by viewModel.time.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
-
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(
-                text = "LOCATION:",
+        if (isServiceRunning) {
+            StopButton(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(x = 0.dp, y = (-100).dp)
+                    .align(Alignment.BottomCenter)
+                    .offset(x = 0.dp, y = (-100).dp),
+                onClick = {
+                    stopLocationService()
+                    viewModel.setIsLocationServiceOn(false)
+                }
             )
-            Text(
-                text = "Latitude = $latitude",
+        } else {
+            StartButton(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(x = 0.dp, y = (-30).dp)
+                    .align(Alignment.BottomCenter)
+                    .offset(x = 0.dp, y = (-100).dp),
+                onClick = {
+                    startLocationService()
+                    viewModel.setIsLocationServiceOn(true)
+                }
             )
-            Text(
-                text = "Longitude = $longitude",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(x = 0.dp, y = 30.dp)
-            )
-            Text(
-                text = "Date : $date",
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(x = 0.dp, y = 60.dp)
-            )
-            Text(
-                text = "Time : $time",
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(x = 0.dp, y = 100.dp)
-            )
-
-            if (isServiceRunning) {
-                StopButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(x = 0.dp, y = (-100).dp),
-                    onClick = {
-                        stopLocationService()
-                        viewModel.setIsLocationServiceOn(false)
-                    }
-                )
-            } else {
-                StartButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(x = 0.dp, y = (-100).dp),
-                    onClick = {
-                        startLocationService()
-                        viewModel.setIsLocationServiceOn(true)
-                    }
-                )
-            }
         }
     }
+
+//    LaunchedEffect(viewModel.isLocationServiceOn) {
+//        viewModel.isLocationServiceOn.collect { newValue ->
+//            if (newValue) {
+//                viewModel.startNewRoute()
+//            } else {
+//                viewModel.stopRoute()
+//            }
+//        }
+//    }
 }

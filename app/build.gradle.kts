@@ -66,5 +66,6 @@ dependencies {
     implementation(libs.androidx.localbroadcastmanager)
     implementation(libs.koin.android)
     implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 }
