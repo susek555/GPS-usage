@@ -93,7 +93,7 @@ class ShowCoordinatesViewModel(
             time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         )
         pointsDao.upsertPoint(newPoint)
-
+        _numberOfPointsOnRoute.value += 1
     }
 
     private suspend fun startNewRoute(){

@@ -18,6 +18,4 @@ val locationModule = module {
     single { get<RoutesDatabase>().pointsDao() }
     single { get<RoutesDatabase>().routesDao() }
     single { LocationRepository() }
-
-//    viewModel { ShowCoordinatesViewModel(get(), get(), get()) }
 }

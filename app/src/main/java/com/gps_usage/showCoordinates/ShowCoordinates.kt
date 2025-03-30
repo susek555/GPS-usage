@@ -40,6 +40,8 @@ fun ShowCoordinatesScreen(
     val date by viewModel.date.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
     val time by viewModel.time.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
 
+    val numberOfPoints by viewModel.numberOfPointsOfRoute.collectAsState()
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -75,6 +77,12 @@ fun ShowCoordinatesScreen(
         )
 
         if (isServiceRunning) {
+            Text(
+                text = "Number of points on current route : $numberOfPoints",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(x = 0.dp, y = 90.dp)
+            )
             StopButton(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -96,14 +104,4 @@ fun ShowCoordinatesScreen(
             )
         }
     }
-
-//    LaunchedEffect(viewModel.isLocationServiceOn) {
-//        viewModel.isLocationServiceOn.collect { newValue ->
-//            if (newValue) {
-//                viewModel.startNewRoute()
-//            } else {
-//                viewModel.stopRoute()
-//            }
-//        }
-//    }
 }
