@@ -21,6 +21,7 @@ import com.gps_usage.Location.LocationService
 import com.gps_usage.showCoordinates.ShowCoordinatesScreen
 import com.gps_usage.ui.theme.GPSusageTheme
 import com.gps_usage.showCoordinates.di.locationModule
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
 class MainActivity : ComponentActivity() {
@@ -126,6 +127,7 @@ class MainActivity : ComponentActivity() {
         }
 
         startKoin{
+            androidContext(this@MainActivity)
             modules(locationModule)
         }
 

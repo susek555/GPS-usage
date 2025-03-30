@@ -13,6 +13,6 @@ import androidx.room.TypeConverters
 )
 abstract class RoutesDatabase: RoomDatabase() {
 
-    abstract val routesDao: RoutesDao
-    abstract val pointsDao: PointsDao
+    abstract fun routesDao(): RoutesDao
+    abstract fun pointsDao(): PointsDao
 }

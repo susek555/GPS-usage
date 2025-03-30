@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PointsDao {
     @Upsert
-    suspend fun upsertPoint(point: Point)
+    suspend fun upsertPoint(point: Point) : Boolean
 
     @Query("SELECT * FROM points WHERE routeId = :selectedRoute")
     fun getPointsForRoute(selectedRoute: Long): Flow<List<Point>>

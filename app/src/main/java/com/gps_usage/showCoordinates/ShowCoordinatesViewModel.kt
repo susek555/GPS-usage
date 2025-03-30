@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -25,7 +26,11 @@ import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
+class ShowCoordinatesViewModel(
+//    private val repository: LocationRepository,
+//    private val pointsDao: PointsDao,
+//    private val routesDao: RoutesDao
+) : ViewModel(), KoinComponent {
 
     private val repository: LocationRepository by inject()
     private val pointsDao: PointsDao by inject()
@@ -43,7 +48,6 @@ class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
     private val _isLocationServiceOn = MutableStateFlow<Boolean>(false)
     val isLocationServiceOn: StateFlow<Boolean> get() = _isLocationServiceOn
 
-
     private var currentRoute: MutableState<Route?> = mutableStateOf(null)
 
     private val _numberOfPointsOnRoute = MutableStateFlow<Long>(0)
@@ -59,20 +63,13 @@ class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
                 _time.emit(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
 
                 // add point to database
-                val newPoint = Point(
-//                    routeId = currentRoute.value!!.id,
-                    routeId = 1, //TODO remove temp
-                    longitude = longitude,
-                    latitude = latitude,
-                    time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                )
-                addPointToDatabase(newPoint)
+                addPointToDatabase(longitude, latitude)
             }
         }
 
         // handle incoming service state change
         viewModelScope.launch{
-            isLocationServiceOn.collect { newValue ->
+            isLocationServiceOn.drop(1).collect { newValue ->
                 if(newValue) {
                     startNewRoute()
                 } else {
@@ -86,18 +83,34 @@ class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
         _isLocationServiceOn.value = new
     }
 
-    private suspend fun addPointToDatabase(point: Point) {
-        //TODO
+    private suspend fun addPointToDatabase(longitude: Double, latitude: Double) {
+        //TODO remove print
         println("route : point added")
+        val newPoint = Point(
+            routeId = currentRoute.value!!.id,
+            longitude = longitude,
+            latitude = latitude,
+            time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        )
+        pointsDao.upsertPoint(newPoint)
+
     }
 
-    suspend fun startNewRoute(){
-        //TODO
+    private suspend fun startNewRoute(){
+        //TODO remove print
         println("new route started")
+        currentRoute.value = Route(
+            name = "",
+            numberOfPoints = 0
+        )
+        currentRoute.value!!.id = routesDao.insertRoute(currentRoute.value!!)
+        println("route id = " + currentRoute.value!!.id)
     }
 
-    suspend fun stopRoute(){
-        //TODO
+    private suspend fun stopRoute(){
+        //TODO remove print and implement
         println("route stopped")
+        //temp
+        routesDao.deleteRoute(currentRoute.value!!)
     }
 }

@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 )
 data class Route(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    var id: Long = 0,
     val name: String,
     val numberOfPoints: Long
 )
