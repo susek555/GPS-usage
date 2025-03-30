@@ -17,11 +17,15 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gps_usage.Location.LocationService
+import com.gps_usage.showCoordinates.utils.formatTime
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -37,8 +41,7 @@ fun ShowCoordinatesScreen(
     val location by viewModel.coordinatesFlow.collectAsState(initial = Pair(0.0, 0.0))
     val (latitude, longitude) = location
 
-    val date by viewModel.date.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
-    val time by viewModel.time.collectAsState(initial = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
+    val duration by viewModel.elapsedTime.collectAsState()
 
     val numberOfPoints by viewModel.numberOfPointsOfRoute.collectAsState()
 
@@ -48,35 +51,43 @@ fun ShowCoordinatesScreen(
         Text(
             text = "LOCATION:",
             modifier = Modifier
-                .align(Alignment.Center)
-                .offset(x = 0.dp, y = (-100).dp)
+                .align(Alignment.TopCenter)
+                .offset(x = 0.dp, y = 20.dp)
         )
         Text(
             text = "Latitude = $latitude",
             modifier = Modifier
-                .align(Alignment.Center)
-                .offset(x = 0.dp, y = (-30).dp)
+                .align(Alignment.TopCenter)
+                .offset(x = 0.dp, y = 50.dp)
         )
         Text(
             text = "Longitude = $longitude",
             modifier = Modifier
-                .align(Alignment.Center)
-                .offset(x = 0.dp, y = 30.dp)
-        )
-        Text(
-            text = "Date : $date",
-            modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(x = 0.dp, y = 60.dp)
-        )
-        Text(
-            text = "Time : $time",
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(x = 0.dp, y = 100.dp)
+                .offset(x = 0.dp, y = 80.dp)
         )
 
         if (isServiceRunning) {
+            Text(
+                text = "DURATION",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(x = 0.dp, y = (-20).dp),
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            )
+            Text(
+                text = formatTime(duration),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(x = 0.dp, y = 20.dp),
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            )
             Text(
                 text = "Number of points on current route : $numberOfPoints",
                 modifier = Modifier
@@ -90,6 +101,7 @@ fun ShowCoordinatesScreen(
                 onClick = {
                     stopLocationService()
                     viewModel.setIsLocationServiceOn(false)
+                    viewModel.stopTimer()
                 }
             )
         } else {
@@ -100,6 +112,7 @@ fun ShowCoordinatesScreen(
                 onClick = {
                     startLocationService()
                     viewModel.setIsLocationServiceOn(true)
+                    viewModel.startTimer()
                 }
             )
         }
