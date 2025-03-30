@@ -8,9 +8,9 @@ import androidx.room.TypeConverters
     entities = [Route::class, Point::class],
     version = 1
 )
-@TypeConverters(
-    Converters::class
-)
+//@TypeConverters(
+//    Converters::class
+//)
 abstract class RoutesDatabase: RoomDatabase() {
 
     abstract fun routesDao(): RoutesDao

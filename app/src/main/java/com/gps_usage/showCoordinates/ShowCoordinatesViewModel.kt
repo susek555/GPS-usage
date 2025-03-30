@@ -99,14 +99,14 @@ class ShowCoordinatesViewModel(
             routeId = currentRoute.value!!.id,
             longitude = longitude,
             latitude = latitude,
-            time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            time = System.currentTimeMillis() - startTime!!
         )
         pointsDao.upsertPoint(newPoint)
         _numberOfPointsOnRoute.value += 1
     }
 
     private suspend fun startNewRoute(){
-        //TODO remove print
+        //TODO remove prints
         println("new route started")
         currentRoute.value = Route(
             name = "",
@@ -119,6 +119,7 @@ class ShowCoordinatesViewModel(
     private suspend fun stopRoute(){
         //TODO remove print and implement
         println("route stopped")
+        _numberOfPointsOnRoute.value = 0
         //temp
         routesDao.deleteRoute(currentRoute.value!!)
     }
