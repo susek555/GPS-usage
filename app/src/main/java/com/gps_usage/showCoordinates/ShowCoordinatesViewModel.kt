@@ -48,12 +48,6 @@ class ShowCoordinatesViewModel(
     private val _coordinatesFlow = MutableStateFlow(Pair(0.0, 0.0))
     val coordinatesFlow: StateFlow<Pair<Double, Double>> get() = _coordinatesFlow
 
-    private val _date = MutableStateFlow<LocalDate>(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
-    val date: StateFlow<LocalDate> get() = _date
-
-    private val _time = MutableStateFlow<LocalTime>(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
-    val time: StateFlow<LocalTime> get() = _time
-
     private val _isLocationServiceOn = MutableStateFlow<Boolean>(false)
     val isLocationServiceOn: StateFlow<Boolean> get() = _isLocationServiceOn
 
@@ -68,8 +62,6 @@ class ShowCoordinatesViewModel(
         viewModelScope.launch {
             repository.locationFlow.collect { (latitude, longitude) ->
                 _coordinatesFlow.emit(Pair(latitude, longitude))
-                _date.emit(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
-                _time.emit(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
 
                 // add point to database
                 addPointToDatabase(longitude, latitude)
@@ -117,7 +109,9 @@ class ShowCoordinatesViewModel(
     }
 
     private suspend fun stopRoute(){
-        //TODO remove print and implement
+        //TODO remove print and temp
+        //TODO if points >= 10 - name dialog
+        //TODO if points < 10 - show dialog and delete route
         println("route stopped")
         _numberOfPointsOnRoute.value = 0
         //temp
