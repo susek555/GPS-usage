@@ -3,6 +3,7 @@ package com.gps_usage.showCoordinates
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,13 +12,18 @@ import com.gps_usage.showCoordinates.data.Point
 import com.gps_usage.showCoordinates.data.PointsDao
 import com.gps_usage.showCoordinates.data.Route
 import com.gps_usage.showCoordinates.data.RoutesDao
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.isActive
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -25,6 +31,9 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class ShowCoordinatesViewModel(
 //    private val repository: LocationRepository,
@@ -112,5 +121,32 @@ class ShowCoordinatesViewModel(
         println("route stopped")
         //temp
         routesDao.deleteRoute(currentRoute.value!!)
+    }
+
+    // timer
+    private var startTime: Long? = null
+    private val _elapsedTime = MutableStateFlow<Long>(0)
+    val elapsedTime: StateFlow<Long> get() = _elapsedTime
+
+    private var timerJob: Job? = null
+
+    fun startTimer() {
+        startTime = System.currentTimeMillis()
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
+            while (isActive) {
+                startTime?.let {
+                    _elapsedTime.value = System.currentTimeMillis() - it
+                }
+                delay(1000)
+            }
+        }
+    }
+
+    fun stopTimer() {
+        timerJob?.cancel()
+        timerJob = null
+        startTime = null
+        _elapsedTime.value = 0
     }
 }
