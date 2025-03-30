@@ -35,11 +35,7 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-class ShowCoordinatesViewModel(
-//    private val repository: LocationRepository,
-//    private val pointsDao: PointsDao,
-//    private val routesDao: RoutesDao
-) : ViewModel(), KoinComponent {
+class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
 
     private val repository: LocationRepository by inject()
     private val pointsDao: PointsDao by inject()
@@ -55,7 +51,6 @@ class ShowCoordinatesViewModel(
 
     private val _numberOfPointsOnRoute = MutableStateFlow<Long>(0)
     val numberOfPointsOfRoute: StateFlow<Long> get() = _numberOfPointsOnRoute
-
 
     init {
         // handle incoming location data
