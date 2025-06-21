@@ -18,7 +18,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.gps_usage.showCoordinates.LocationRepository
 import kotlinx.coroutines.isActive
 import org.koin.android.ext.android.inject
