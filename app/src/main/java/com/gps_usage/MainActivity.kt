@@ -14,11 +14,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import com.gps_usage.Location.LocationService
-import com.gps_usage.showCoordinates.ShowCoordinatesScreen
+import com.gps_usage.showCoordinates.MainScreen
 import com.gps_usage.ui.theme.GPSusageTheme
 import com.gps_usage.showCoordinates.di.locationModule
 import org.koin.android.ext.koin.androidContext
@@ -135,7 +134,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             GPSusageTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    ShowCoordinatesScreen(
+                    MainScreen(
                         startLocationService = { startLocationService() },
                         stopLocationService = { stopLocationService() }
                     )

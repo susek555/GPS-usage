@@ -1,41 +1,30 @@
 package com.gps_usage.showCoordinates
 
-import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gps_usage.showCoordinates.data.Point
 import com.gps_usage.showCoordinates.data.PointsDao
 import com.gps_usage.showCoordinates.data.Route
 import com.gps_usage.showCoordinates.data.RoutesDao
+import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogConfig
+import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogFactory
+import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogConfigState
+import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogState
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import kotlin.time.Duration
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
-class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
+class MainViewModel() : ViewModel(), KoinComponent {
 
     private val repository: LocationRepository by inject()
     private val pointsDao: PointsDao by inject()
@@ -50,7 +39,49 @@ class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
     private var currentRoute: MutableState<Route?> = mutableStateOf(null)
 
     private val _numberOfPointsOnRoute = MutableStateFlow<Long>(0)
-    val numberOfPointsOfRoute: StateFlow<Long> get() = _numberOfPointsOnRoute
+    val numberOfPointsOnRoute: StateFlow<Long> get() = _numberOfPointsOnRoute
+
+    private val dialogFactory = StopRouteDialogFactory()
+    private val _isStopRouteDialogOpen = MutableStateFlow(false)
+    private val _stopRouteDialogConfig = MutableStateFlow<StopRouteDialogConfig?>(
+        dialogFactory.create(
+            StopRouteDialogConfigState.None,
+            onConfirm = {},
+            onDismiss = {}
+        )
+    )
+    val stopRouteDialogState = combine(_isStopRouteDialogOpen, _stopRouteDialogConfig) {isVisible, config ->
+        StopRouteDialogState(isVisible, config)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StopRouteDialogState(false, null))
+
+    fun onEvent(event: MainScreenEvent) {
+        when(event) {
+            MainScreenEvent.HideStopRouteDialog -> {
+                _isStopRouteDialogOpen.value = false
+            }
+            MainScreenEvent.ShowStopRouteDialog -> {
+                setDialogConfig()
+                _isStopRouteDialogOpen.value = true
+            }
+            MainScreenEvent.StartRoute -> {
+                _isLocationServiceOn.value = true
+                startTimer()
+                viewModelScope.launch { startNewRoute() }
+            }
+            is MainScreenEvent.SaveRoute -> {
+                viewModelScope.launch { stopRoute(name = event.name) }
+                _isLocationServiceOn.value = false
+                stopTimer()
+                _isStopRouteDialogOpen.value = false
+            }
+            MainScreenEvent.CancelRoute -> {
+                viewModelScope.launch { cancelRoute() }
+                _isLocationServiceOn.value = false
+                stopTimer()
+                _isStopRouteDialogOpen.value = false
+            }
+        }
+    }
 
     init {
         // handle incoming location data
@@ -62,21 +93,22 @@ class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
                 addPointToDatabase(longitude, latitude)
             }
         }
-
-        // handle incoming service state change
-        viewModelScope.launch{
-            isLocationServiceOn.drop(1).collect { newValue ->
-                if(newValue) {
-                    startNewRoute()
-                } else {
-                    stopRoute()
-                }
-            }
-        }
     }
 
-    fun setIsLocationServiceOn(new: Boolean) {
-        _isLocationServiceOn.value = new
+    private fun setDialogConfig() {
+        if(numberOfPointsOnRoute.value < 10){
+            _stopRouteDialogConfig.value = dialogFactory.create(
+                StopRouteDialogConfigState.NotLongEnough,
+                onConfirm = { onEvent(MainScreenEvent.CancelRoute)},
+                onDismiss = { onEvent(MainScreenEvent.HideStopRouteDialog)}
+            )
+        } else {
+            _stopRouteDialogConfig.value = dialogFactory.create(
+                StopRouteDialogConfigState.AskForName,
+                onConfirm = { name -> onEvent(MainScreenEvent.SaveRoute(name!!))},
+                onDismiss = { onEvent(MainScreenEvent.HideStopRouteDialog)}
+            )
+        }
     }
 
     private suspend fun addPointToDatabase(longitude: Double, latitude: Double) {
@@ -103,11 +135,18 @@ class ShowCoordinatesViewModel() : ViewModel(), KoinComponent {
         println("route id = " + currentRoute.value!!.id)
     }
 
-    private suspend fun stopRoute(){
+    private suspend fun cancelRoute() {
+        println("route cancelled")
+        _numberOfPointsOnRoute.value = 0
+        routesDao.deleteRoute(currentRoute.value!!)
+    }
+
+    private suspend fun stopRoute(name: String){
         //TODO remove print and temp
         //TODO if points >= 10 - name dialog
         //TODO if points < 10 - show dialog and delete route
         println("route stopped")
+        println(name)
         _numberOfPointsOnRoute.value = 0
         //temp
         routesDao.deleteRoute(currentRoute.value!!)

@@ -15,7 +15,7 @@ fun StopRouteDialog(
     var inputText by remember { mutableStateOf("") }
 
     AlertDialog(
-        onDismissRequest = { /* tu możesz kontrolować zamknięcie dialogu */ },
+        onDismissRequest = config.onDismiss,
         title = {
             Text(text = config.mainText)
         },
@@ -31,18 +31,16 @@ fun StopRouteDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    config.onConfirm()
-                    // jeśli chcesz, możesz przekazać `inputText` gdzieś dalej, ale tutaj tego nie masz w config
-                }
+                    config.onConfirm(inputText)
+                },
+                enabled = (inputText.isNotEmpty() || !config.hasTextField)
             ) {
                 Text("Confirm")
             }
         },
         dismissButton = {
             TextButton(
-                onClick = {
-                    // tu np. możesz zamknąć dialog (jeśli masz logikę)
-                }
+                onClick = config.onDismiss
             ) {
                 Text("Cancel")
             }

@@ -1,12 +1,12 @@
 package com.gps_usage.showCoordinates
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -16,25 +16,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialog
 import com.gps_usage.showCoordinates.utils.formatTime
 
 @Composable
-fun ShowCoordinatesScreen(
+fun MainScreen(
     startLocationService: () -> Unit,
     stopLocationService: () -> Unit,
-    viewModel: ShowCoordinatesViewModel = viewModel()
+    viewModel: MainViewModel = viewModel()
 ) {
     val isServiceRunning by viewModel.isLocationServiceOn.collectAsState()
+
+    LaunchedEffect(isServiceRunning){
+        if(isServiceRunning){
+            startLocationService()
+        } else {
+            stopLocationService()
+        }
+    }
+
+    val stopRouteDialogState by viewModel.stopRouteDialogState.collectAsState()
 
     val location by viewModel.coordinatesFlow.collectAsState(initial = Pair(0.0, 0.0))
     val (latitude, longitude) = location
 
     val duration by viewModel.elapsedTime.collectAsState()
 
-    val numberOfPoints by viewModel.numberOfPointsOfRoute.collectAsState()
+    val numberOfPoints by viewModel.numberOfPointsOnRoute.collectAsState()
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(20.dp)
     ) {
         Text(
             text = "LOCATION:",
@@ -87,9 +98,7 @@ fun ShowCoordinatesScreen(
                     .align(Alignment.BottomCenter)
                     .offset(x = 0.dp, y = (-100).dp),
                 onClick = {
-                    stopLocationService()
-                    viewModel.setIsLocationServiceOn(false)
-                    viewModel.stopTimer()
+                    viewModel.onEvent(MainScreenEvent.ShowStopRouteDialog)
                 }
             )
         } else {
@@ -98,11 +107,12 @@ fun ShowCoordinatesScreen(
                     .align(Alignment.BottomCenter)
                     .offset(x = 0.dp, y = (-100).dp),
                 onClick = {
-                    startLocationService()
-                    viewModel.setIsLocationServiceOn(true)
-                    viewModel.startTimer()
+                    viewModel.onEvent(MainScreenEvent.StartRoute)
                 }
             )
         }
+    }
+    if(stopRouteDialogState.isVisible){
+        StopRouteDialog(stopRouteDialogState.config!!)
     }
 }

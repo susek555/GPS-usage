@@ -1,25 +1,25 @@
 package com.gps_usage.showCoordinates.dialogFactory
 
-class StopRouteDialogFactory(
-    private val onConfirm: () -> Unit
-) {
-    fun create(state: StopRouteDialogState) : StopRouteDialogConfig? {
+class StopRouteDialogFactory() {
+    fun create(
+        state: StopRouteDialogConfigState,
+        onConfirm: (String?) -> Unit,
+        onDismiss: () -> Unit
+    ) : StopRouteDialogConfig? {
         return when(state) {
-            StopRouteDialogState.AskForName -> StopRouteDialogConfig(
+            StopRouteDialogConfigState.AskForName -> StopRouteDialogConfig(
                 mainText = "Enter name for this route",
                 hasTextField = true,
                 textFieldShadowText = "Name...",
-                onConfirm = {
-                    onConfirm()
-                }
+                onConfirm = onConfirm,
+                onDismiss = onDismiss
             )
-            StopRouteDialogState.NotLongEnough -> StopRouteDialogConfig(
+            StopRouteDialogConfigState.NotLongEnough -> StopRouteDialogConfig(
                 mainText = "Route is not long enough",
-                onConfirm = {
-                    onConfirm()
-                }
+                onConfirm = onConfirm,
+                onDismiss = onDismiss
             )
-            StopRouteDialogState.None -> null
+            StopRouteDialogConfigState.None -> null
         }
     }
 }
