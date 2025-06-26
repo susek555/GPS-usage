@@ -132,7 +132,8 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
         println("new route started")
         currentRoute.value = Route(
             name = "",
-            numberOfPoints = 0
+            numberOfPoints = 0,
+            time = System.currentTimeMillis()
         )
         currentRoute.value!!.id = routesDao.insertRoute(currentRoute.value!!)
         println("route id = " + currentRoute.value!!.id)
@@ -152,7 +153,7 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
         println(name)
         _numberOfPointsOnRoute.value = 0
         //temp
-        routesDao.deleteRoute(currentRoute.value!!)
+//        routesDao.deleteRoute(currentRoute.value!!)
     }
 
     // timer
@@ -162,7 +163,7 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
 
     private var timerJob: Job? = null
 
-    fun startTimer() {
+    private fun startTimer() {
         startTime = System.currentTimeMillis()
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
@@ -175,7 +176,7 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
         }
     }
 
-    fun stopTimer() {
+    private fun stopTimer() {
         timerJob?.cancel()
         timerJob = null
         startTime = null

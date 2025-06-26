@@ -11,5 +11,6 @@ data class Route(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
     val name: String,
-    val numberOfPoints: Long
+    val numberOfPoints: Long,
+    val time: Long
 )

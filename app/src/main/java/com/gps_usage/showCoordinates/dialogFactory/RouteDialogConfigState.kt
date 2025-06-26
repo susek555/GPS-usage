@@ -5,4 +5,5 @@ sealed class RouteDialogConfigState {
     data object NotLongEnough: RouteDialogConfigState()
     data object AskForName: RouteDialogConfigState()
     data object EditRoute: RouteDialogConfigState()
+    data object DeleteRoute: RouteDialogConfigState()
 }
