@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 
 @Composable
-fun StopRouteDialog(
-    config: StopRouteDialogConfig
+fun RouteDialog(
+    config: RouteDialogConfig
 ){
     var inputText by remember { mutableStateOf("") }
 

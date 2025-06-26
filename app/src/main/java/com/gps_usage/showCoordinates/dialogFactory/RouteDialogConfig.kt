@@ -1,6 +1,6 @@
 package com.gps_usage.showCoordinates.dialogFactory
 
-data class StopRouteDialogConfig (
+data class RouteDialogConfig (
     val mainText: String,
     val hasTextField: Boolean = false,
     val textFieldShadowText: String = "",

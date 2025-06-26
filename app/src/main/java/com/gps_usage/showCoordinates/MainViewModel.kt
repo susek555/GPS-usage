@@ -8,10 +8,10 @@ import com.gps_usage.showCoordinates.data.Point
 import com.gps_usage.showCoordinates.data.PointsDao
 import com.gps_usage.showCoordinates.data.Route
 import com.gps_usage.showCoordinates.data.RoutesDao
-import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogConfig
-import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogFactory
-import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogConfigState
-import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogState
+import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfig
+import com.gps_usage.showCoordinates.dialogFactory.RouteDialogFactory
+import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfigState
+import com.gps_usage.showCoordinates.dialogFactory.RouteDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,18 +44,18 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
     private val _numberOfPointsOnRoute = MutableStateFlow<Long>(0)
     val numberOfPointsOnRoute: StateFlow<Long> get() = _numberOfPointsOnRoute
 
-    private val dialogFactory = StopRouteDialogFactory()
+    private val dialogFactory = RouteDialogFactory()
     private val _isStopRouteDialogOpen = MutableStateFlow(false)
-    private val _stopRouteDialogConfig = MutableStateFlow<StopRouteDialogConfig?>(
+    private val _stopRouteDialogConfig = MutableStateFlow<RouteDialogConfig?>(
         dialogFactory.create(
-            StopRouteDialogConfigState.None,
+            RouteDialogConfigState.None,
             onConfirm = {},
             onDismiss = {}
         )
     )
     val stopRouteDialogState = combine(_isStopRouteDialogOpen, _stopRouteDialogConfig) {isVisible, config ->
-        StopRouteDialogState(isVisible, config)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StopRouteDialogState(false, null))
+        RouteDialogState(isVisible, config)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RouteDialogState(false, null))
 
     fun onEvent(event: MainScreenEvent) {
         when(event) {
@@ -101,13 +101,13 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
     private fun setDialogConfig() {
         if(numberOfPointsOnRoute.value < 10){
             _stopRouteDialogConfig.value = dialogFactory.create(
-                StopRouteDialogConfigState.NotLongEnough,
+                RouteDialogConfigState.NotLongEnough,
                 onConfirm = { onEvent(MainScreenEvent.CancelRoute)},
                 onDismiss = { onEvent(MainScreenEvent.HideStopRouteDialog)}
             )
         } else {
             _stopRouteDialogConfig.value = dialogFactory.create(
-                StopRouteDialogConfigState.AskForName,
+                RouteDialogConfigState.AskForName,
                 onConfirm = { name -> onEvent(MainScreenEvent.SaveRoute(name!!))},
                 onDismiss = { onEvent(MainScreenEvent.HideStopRouteDialog)}
             )

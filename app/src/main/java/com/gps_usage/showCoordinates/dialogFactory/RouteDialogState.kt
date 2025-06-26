@@ -1,6 +1,6 @@
 package com.gps_usage.showCoordinates.dialogFactory
 
-data class StopRouteDialogState (
+data class RouteDialogState (
     val isVisible: Boolean,
-    val config: StopRouteDialogConfig?
+    val config: RouteDialogConfig?
 )
