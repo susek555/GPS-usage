@@ -7,8 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gps_usage.showCoordinates.MainScreen
 import com.gps_usage.showCoordinates.MainViewModel
-import com.gps_usage.showCoordinates.RoutesScreen.RoutesScreen
-import com.gps_usage.showCoordinates.RoutesScreen.RoutesViewModel
+import com.gps_usage.showCoordinates.routesScreen.RoutesScreen
+import com.gps_usage.showCoordinates.routesScreen.RoutesViewModel
 
 @Composable
 fun NavigationController(
