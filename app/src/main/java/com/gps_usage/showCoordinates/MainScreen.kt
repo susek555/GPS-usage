@@ -1,9 +1,14 @@
 package com.gps_usage.showCoordinates
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,7 +20,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gps_usage.showCoordinates.RoutesScreen.RoutesScreen
 import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialog
 import com.gps_usage.showCoordinates.utils.formatTime
 
@@ -23,7 +30,8 @@ import com.gps_usage.showCoordinates.utils.formatTime
 fun MainScreen(
     startLocationService: () -> Unit,
     stopLocationService: () -> Unit,
-    viewModel: MainViewModel = viewModel()
+    displayRoutesScreen: () -> Unit,
+    viewModel: MainViewModel
 ) {
     val isServiceRunning by viewModel.isLocationServiceOn.collectAsState()
 
@@ -47,23 +55,31 @@ fun MainScreen(
     Box(
         modifier = Modifier.fillMaxSize().padding(20.dp)
     ) {
+        Button(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = 0.dp, y = 20.dp),
+            onClick = displayRoutesScreen
+        ){
+            Text("My Routes")
+        }
         Text(
             text = "LOCATION:",
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(x = 0.dp, y = 20.dp)
+                .offset(x = 0.dp, y = 60.dp)
         )
         Text(
             text = "Latitude = $latitude",
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(x = 0.dp, y = 50.dp)
+                .offset(x = 0.dp, y = 90.dp)
         )
         Text(
             text = "Longitude = $longitude",
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(x = 0.dp, y = 80.dp)
+                .offset(x = 0.dp, y = 120.dp)
         )
 
         if (isServiceRunning) {

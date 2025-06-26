@@ -20,13 +20,17 @@ import com.gps_usage.Location.LocationService
 import com.gps_usage.showCoordinates.MainScreen
 import com.gps_usage.ui.theme.GPSusageTheme
 import com.gps_usage.showCoordinates.di.locationModule
+import com.gps_usage.showCoordinates.navigation.NavigationController
+import dagger.hilt.android.AndroidEntryPoint
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var locationService: LocationService
     private var isLocationServiceBound: Boolean = false
+    private var isServiceRunning: Boolean = false
 
     //LOCATION SERVICE
 
@@ -50,12 +54,13 @@ class MainActivity : ComponentActivity() {
 //    }
 
     private fun startLocationService() {
-//        if (!isServiceRunning(LocationService::class.java)) {
+        if (!isServiceRunning) {
             Intent(this, LocationService::class.java).apply {
                 action = LocationService.ACTION_START
                 startService(this)
             }
-//        }
+            isServiceRunning = true
+        }
     }
 
     private fun stopLocationService() {
@@ -63,6 +68,7 @@ class MainActivity : ComponentActivity() {
             action = LocationService.ACTION_STOP
             startService(this)
         }
+        isServiceRunning = false
     }
 
     //PERMISSIONS RESPONSIBILITY
@@ -134,7 +140,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             GPSusageTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    MainScreen(
+                    NavigationController(
                         startLocationService = { startLocationService() },
                         stopLocationService = { stopLocationService() }
                     )

@@ -6,7 +6,9 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import com.gps_usage.Location.LocationService
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class LocationApp: Application() {
     override fun onCreate() {
         super.onCreate()

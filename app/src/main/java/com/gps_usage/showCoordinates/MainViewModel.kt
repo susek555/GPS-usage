@@ -12,6 +12,7 @@ import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogConfig
 import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogFactory
 import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogConfigState
 import com.gps_usage.showCoordinates.dialogFactory.StopRouteDialogState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +24,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import javax.inject.Inject
 
-class MainViewModel() : ViewModel(), KoinComponent {
+@HiltViewModel
+class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
 
     private val repository: LocationRepository by inject()
     private val pointsDao: PointsDao by inject()
