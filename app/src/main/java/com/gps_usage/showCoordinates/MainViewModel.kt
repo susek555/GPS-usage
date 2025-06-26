@@ -43,6 +43,7 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
 
     private val _numberOfPointsOnRoute = MutableStateFlow<Long>(0)
     val numberOfPointsOnRoute: StateFlow<Long> get() = _numberOfPointsOnRoute
+    private val minimumNumberOfPoints = 10
 
     private val dialogFactory = RouteDialogFactory()
     private val _isStopRouteDialogOpen = MutableStateFlow(false)
@@ -99,7 +100,7 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
     }
 
     private fun setDialogConfig() {
-        if(numberOfPointsOnRoute.value < 10){
+        if(numberOfPointsOnRoute.value < minimumNumberOfPoints){
             _stopRouteDialogConfig.value = dialogFactory.create(
                 RouteDialogConfigState.NotLongEnough,
                 onConfirm = { onEvent(MainScreenEvent.CancelRoute)},
@@ -152,8 +153,7 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
         println("route stopped")
         println(name)
         _numberOfPointsOnRoute.value = 0
-        //temp
-//        routesDao.deleteRoute(currentRoute.value!!)
+        routesDao.updateRoute(currentRoute.value!!.copy(name = name))
     }
 
     // timer

@@ -56,13 +56,17 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
             is RoutesScreenEvent.DeleteRoute -> {
                 viewModelScope.launch {
                     routesDao.deleteRoute(event.route)
+                    _routes.value = routesDao.getAllRoutes()
                 }
+                _isRouteDialogOpen.value = false
             }
             is RoutesScreenEvent.EditRoute -> {
                 val updatedRoute = event.route.copy(name = event.name)
                 viewModelScope.launch{
                     routesDao.updateRoute(updatedRoute)
+                    _routes.value = routesDao.getAllRoutes()
                 }
+                _isRouteDialogOpen.value = false
             }
             RoutesScreenEvent.HideRouteDialog -> {
                 _isRouteDialogOpen.value = false
