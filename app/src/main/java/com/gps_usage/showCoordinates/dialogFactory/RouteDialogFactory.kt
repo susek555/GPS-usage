@@ -6,7 +6,8 @@ class RouteDialogFactory() {
     fun create(
         state: RouteDialogConfigState,
         onConfirm: (String?) -> Unit,
-        onDismiss: () -> Unit
+        onDismiss: () -> Unit,
+        baseTextState: String? = ""
     ) : RouteDialogConfig? {
         return when(state) {
             RouteDialogConfigState.AskForName -> RouteDialogConfig(
@@ -25,6 +26,7 @@ class RouteDialogFactory() {
                 mainText = "Change name of this route",
                 hasTextField = true,
                 textFieldShadowText = "Name...",
+                baseTextState = baseTextState!!,
                 onConfirm = onConfirm,
                 onDismiss = onDismiss
             )

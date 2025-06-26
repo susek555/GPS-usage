@@ -12,7 +12,7 @@ import androidx.compose.runtime.*
 fun RouteDialog(
     config: RouteDialogConfig
 ){
-    var inputText by remember { mutableStateOf("") }
+    var inputText by remember { mutableStateOf(config.baseTextState) }
 
     AlertDialog(
         onDismissRequest = config.onDismiss,

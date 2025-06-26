@@ -65,6 +65,10 @@ fun RoutesScreen(
                             text = formatDateOnly(route.time),
                             fontSize = 12.sp
                         )
+                        Text(
+                            text = formatDateOnly(route.time),
+                            fontSize = 12.sp
+                        )
                     }
                     IconButton(
                         onClick = {

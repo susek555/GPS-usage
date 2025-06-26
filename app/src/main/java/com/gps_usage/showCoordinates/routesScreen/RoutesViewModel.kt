@@ -91,7 +91,8 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
             _routeDialogConfig.value = dialogFactory.create(
                 RouteDialogConfigState.EditRoute,
                 onConfirm = { name -> onEvent(RoutesScreenEvent.EditRoute(route, name!!))},
-                onDismiss = { onEvent(RoutesScreenEvent.HideRouteDialog)}
+                onDismiss = { onEvent(RoutesScreenEvent.HideRouteDialog)},
+                baseTextState = route.name
             )
         } else {
             _routeDialogConfig.value = dialogFactory.create(
