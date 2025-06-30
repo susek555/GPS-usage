@@ -1,0 +1,21 @@
+services:
+  postgres:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: gps_postgres
+    environment:
+      POSTGRES_USER: gps_user
+      POSTGRES_PASSWORD: gps_password
+      POSTGRES_DB: gps_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gps_user -d gps_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
