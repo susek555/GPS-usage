@@ -24,6 +24,7 @@ public class Route {
     @Column(name = "numberOfPoints")
     private Long numberOfPoints;
 
+    @NonNull
     @Column(name = "time")
     private LocalDate time;
 

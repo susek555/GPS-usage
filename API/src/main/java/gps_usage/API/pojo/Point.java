@@ -20,7 +20,7 @@ public class Point {
     @NonNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "routeId", referencedColumnName = "id")
-    private Long routeId;
+    private Route routeId;
 
     @NonNull
     @Column(name = "latitude")
@@ -33,16 +33,4 @@ public class Point {
     @NonNull
     @Column(name = "time")
     private LocalDateTime time;
-
-    public Point(
-            @NonNull Long routeId,
-            @NonNull Double latitude,
-            @NonNull Double longitude,
-            @NonNull LocalDateTime time
-    ) {
-        this.routeId = routeId;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.time = time;
-    }
 }
