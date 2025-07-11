@@ -3,7 +3,7 @@ package gps_usage.API.pojo;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -32,13 +32,13 @@ public class Point {
 
     @NonNull
     @Column(name = "time")
-    private LocalDate time;
+    private LocalDateTime time;
 
     public Point(
             @NonNull Long routeId,
             @NonNull Double latitude,
             @NonNull Double longitude,
-            @NonNull LocalDate time
+            @NonNull LocalDateTime time
     ) {
         this.routeId = routeId;
         this.latitude = latitude;
