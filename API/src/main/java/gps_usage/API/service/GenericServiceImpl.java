@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public class GenericServiceImpl<T, ID> implements GenericService<T, ID> {
-    private final JpaRepository<T, ID> repository;
+    protected final JpaRepository<T, ID> repository;
 
     public GenericServiceImpl(JpaRepository<T, ID> repository) {
         this.repository = repository;
