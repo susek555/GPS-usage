@@ -3,6 +3,8 @@ package gps_usage.API.pojo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,12 +24,16 @@ public class Route {
     @Column(name = "numberOfPoints")
     private Long numberOfPoints;
 
-    @Column(name = "duration")
-    private Long duration;
+    @Column(name = "time")
+    private LocalDate time;
 
-    public Route(String name, @NonNull Long numberOfPoints, Long duration) {
+    public Route(
+            String name,
+            @NonNull Long numberOfPoints,
+            LocalDate time
+    ) {
         this.name = name;
         this.numberOfPoints = numberOfPoints;
-        this.duration = duration;
+        this.time = time;
     }
 }
