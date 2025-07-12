@@ -1,5 +1,6 @@
 package gps_usage.API.web;
 
+import gps_usage.API.dto.RouteCreateDTO;
 import gps_usage.API.dto.RouteDTO;
 import gps_usage.API.pojo.Route;
 import gps_usage.API.service.RouteService;
@@ -18,7 +19,7 @@ public class RouteController extends GenericController<Route, Long> {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<RouteDTO> postRoute(@RequestBody RouteDTO routeDTO) {
-        return new ResponseEntity<>(((RouteService) service).postRoute(routeDTO), HttpStatus.CREATED);
+    public ResponseEntity<RouteDTO> postRoute(@RequestBody RouteCreateDTO createDTO) {
+        return new ResponseEntity<>(((RouteService) service).postRoute(createDTO), HttpStatus.CREATED);
     }
 }
