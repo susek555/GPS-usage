@@ -39,4 +39,43 @@ public class RouteControllerIT {
             .andExpect(MockMvcResultMatchers.jsonPath("$.numberOfPoints").value(10))
             .andExpect(MockMvcResultMatchers.jsonPath("$.time").value("2025-07-06"));
     }
+
+    @Test
+    @Transactional
+    void testPost_OnlyNecessaryFieldsProvided() throws Exception {
+
+        String jsonBody = """
+                {
+                    "numberOfPoints": 10,
+                    "time": "2025-07-06"
+                }
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.numberOfPoints").value(10))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.time").value("2025-07-06"));
+    }
+
+    @Test
+    void testPost_EmptyBody() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                .contentType("application/json"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void testPost_MissingFields() throws Exception {
+        String jsonBody = """
+                {
+                    "name": "Test",
+                    "time": "2025-07-06"
+                }
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }
