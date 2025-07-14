@@ -78,4 +78,9 @@ public class RouteControllerIT {
                         .content(jsonBody))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    void testDelete_IfSuccessfulResponse() throws Exception {
+
+    }
 }
