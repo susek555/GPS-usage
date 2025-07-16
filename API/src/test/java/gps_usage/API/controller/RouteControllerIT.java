@@ -1,5 +1,7 @@
 package gps_usage.API.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gps_usage.API.dto.RouteDTO;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 public class RouteControllerIT {
     private final MockMvc mockMvc;
+    private final ObjectMapper mapper;
 
     @Autowired
-    public RouteControllerIT(MockMvc mockMvc) {
+    public RouteControllerIT(MockMvc mockMvc, ObjectMapper mapper) {
         this.mockMvc = mockMvc;
+        this.mapper = mapper;
     }
 
     @Test
@@ -77,6 +81,34 @@ public class RouteControllerIT {
                         .contentType("application/json")
                         .content(jsonBody))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    void testGet_RoutePresentInDatabase() throws Exception {
+        String jsonBody = """
+                {
+                    "name": "Test",
+                    "numberOfPoints": 10,
+                    "time": "2025-07-06"
+                }
+                """;
+        String routeJSON = mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                .contentType("application/json")
+                .content(jsonBody))
+            .andReturn().getResponse().getContentAsString();
+        RouteDTO route = mapper.readValue(routeJSON, RouteDTO.class);
+        mockMvc.perform(MockMvcRequestBuilders.get("/route/".concat(route.getId().toString())))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.numberOfPoints").value(10))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.time").value("2025-07-06"));
+    }
+
+    @Test
+    @Transactional
+    void testGet_RouteNotPresentInDatabase() throws Exception {
+
     }
 
     @Test
