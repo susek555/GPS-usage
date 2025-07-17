@@ -29,7 +29,7 @@ public class PointServiceImpl extends GenericServiceImpl<Point, Long> implements
     }
 
     @Override
-    public void PostPoints(List<PointCreateDTO> points, Long id) {
+    public void postPoints(List<PointCreateDTO> points, Long id) {
         Route route = routeRepository.getReferenceById(id);
         List<PointDatabaseInsertDTO> pointsToInsert = points.stream()
             .map( point -> {
