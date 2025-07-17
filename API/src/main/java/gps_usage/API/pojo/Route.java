@@ -22,7 +22,7 @@ public class Route {
 
     @NonNull
     @Column(name = "numberOfPoints")
-    private Long numberOfPoints;
+    private Integer numberOfPoints;
 
     @NonNull
     @Column(name = "time")
@@ -30,7 +30,7 @@ public class Route {
 
     public Route(
             String name,
-            @NonNull Long numberOfPoints,
+            @NonNull Integer numberOfPoints,
             LocalDate time
     ) {
         this.name = name;

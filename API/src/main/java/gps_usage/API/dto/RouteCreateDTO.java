@@ -14,6 +14,6 @@ import java.time.LocalDate;
 
 public class RouteCreateDTO {
     private String name;
-    private Long numberOfPoints;
+    private Integer numberOfPoints;
     private LocalDate time;
 }

@@ -17,5 +17,5 @@ public class PointDTO {
     private Route route;
     private Double latitude;
     private Double longitude;
-    private LocalDateTime time;
+    private Integer time;
 }

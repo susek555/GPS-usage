@@ -16,5 +16,5 @@ public class PointCreateDTO {
     private Long routeId;
     private Double latitude;
     private Double longitude;
-    private LocalDateTime time;
+    private Integer time;
 }
