@@ -23,6 +23,11 @@ public abstract class GenericController<T, ID> {
 
     @GetMapping("/{id}")
     public ResponseEntity<T> get(@PathVariable ID id) {
-        return new ResponseEntity<>(service.get(id), HttpStatus.OK);
+        T entity = service.get(id);
+        if (entity != null) {
+            return new ResponseEntity<>(service.get(id), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 }

@@ -106,13 +106,46 @@ public class RouteControllerIT {
     }
 
     @Test
-    @Transactional
     void testGet_RouteNotPresentInDatabase() throws Exception {
-
+        String jsonBody = """
+                {
+                    "name": "Test",
+                    "numberOfPoints": 10,
+                    "time": "2025-07-06"
+                }
+                """;
+        String routeJSON = mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andReturn().getResponse().getContentAsString();
+        RouteDTO route = mapper.readValue(routeJSON, RouteDTO.class);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/route/delete/".concat(route.getId().toString())));
+        mockMvc.perform(MockMvcRequestBuilders.get("/route/".concat(route.getId().toString())))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
-    void testDelete_IfSuccessfulResponse() throws Exception {
+    void testDelete_RoutePresentInDatabase() throws Exception {
+        String jsonBody = """
+                {
+                    "name": "Test",
+                    "numberOfPoints": 10,
+                    "time": "2025-07-06"
+                }
+                """;
+        String routeJSON = mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andReturn().getResponse().getContentAsString();
+        RouteDTO route = mapper.readValue(routeJSON, RouteDTO.class);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/route/delete/".concat(route.getId().toString())))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 
+    @Test
+    void testDelete_RouteNotPresentInDatabase() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/route/delete/1"));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/route/delete/1"))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 }
