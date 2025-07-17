@@ -7,5 +7,5 @@ import gps_usage.API.pojo.Point;
 import java.util.List;
 
 public interface PointService extends GenericService<Point, Long>{
-    void PostPoints(List<PointCreateDTO> points);
+    void PostPoints(List<PointCreateDTO> points, Long id);
 }

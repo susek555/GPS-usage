@@ -21,8 +21,7 @@ public class RouteServiceImpl extends GenericServiceImpl<Route, Long> implements
         if (!hasAllRequiredFields(createDTO)) {
             throw new RequiredFieldsMissingException();
         }
-        Route routeToSave = mapper.createDTOToRoute(createDTO);
-        Route savedRoute = repository.save(routeToSave);
+        Route savedRoute = repository.save(mapper.createDTOToRoute(createDTO));
         return mapper.routeToDTO(savedRoute);
     }
 
