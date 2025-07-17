@@ -20,7 +20,7 @@ public class Point {
     @NonNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "routeId", referencedColumnName = "id")
-    private Route routeId;
+    private Route route;
 
     @NonNull
     @Column(name = "latitude")

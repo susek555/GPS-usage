@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PointCreateDTO {
-    private Route route;
+    private Long routeId;
     private Double latitude;
     private Double longitude;
     private LocalDateTime time;
