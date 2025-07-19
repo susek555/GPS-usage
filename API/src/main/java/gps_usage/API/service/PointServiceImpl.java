@@ -1,6 +1,7 @@
 package gps_usage.API.service;
 
 import gps_usage.API.dto.PointCreateDTO;
+import gps_usage.API.dto.PointDTO;
 import gps_usage.API.dto.PointDatabaseInsertDTO;
 import gps_usage.API.exceptions.RequiredFieldsMissingException;
 import gps_usage.API.mapper.PointMapper;
@@ -8,6 +9,10 @@ import gps_usage.API.pojo.Point;
 import gps_usage.API.pojo.Route;
 import gps_usage.API.repository.PointRepository;
 import gps_usage.API.repository.RouteRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -37,6 +42,12 @@ public class PointServiceImpl extends GenericServiceImpl<Point, Long> implements
         for(PointDatabaseInsertDTO point : pointsToInsert) {
             postSinglePoint(point);
         }
+    }
+
+    @Override
+    public Page<PointDTO> getPointsByRouteIdPaged(Long routeId, int pageNumber, int pageSize) {
+        Pageable pageable = (Pageable) PageRequest.of(pageNumber, pageSize, Sort.by("time").ascending());
+        return ((PointRepository) repository).findByRouteId(routeId, pageable).map(mapper::pointToDTO);
     }
 
     //utils
