@@ -18,9 +18,9 @@ public class PointController extends GenericController<Point, Long>{
     }
 
     //post no more than 200 points per single request
-    @PostMapping("/post/{id}")
-    public ResponseEntity<Void> postPoint(@RequestBody List<PointCreateDTO> listCreateDTO, @PathVariable Long id) {
-        ((PointService) service).postPoints(listCreateDTO, id);
+    @PostMapping("/post/{routeId}")
+    public ResponseEntity<Void> postPoint(@RequestBody List<PointCreateDTO> listCreateDTO, @PathVariable Long routeId) {
+        ((PointService) service).postPoints(listCreateDTO, routeId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

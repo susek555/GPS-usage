@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PointService extends GenericService<Point, Long>{
     void postPoints(List<PointCreateDTO> points, Long id);
+//    List<Point>
 }

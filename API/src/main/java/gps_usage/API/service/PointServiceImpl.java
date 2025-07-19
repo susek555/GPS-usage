@@ -2,18 +2,14 @@ package gps_usage.API.service;
 
 import gps_usage.API.dto.PointCreateDTO;
 import gps_usage.API.dto.PointDatabaseInsertDTO;
-import gps_usage.API.dto.RouteCreateDTO;
-import gps_usage.API.dto.RouteDTO;
 import gps_usage.API.exceptions.RequiredFieldsMissingException;
 import gps_usage.API.mapper.PointMapper;
-import gps_usage.API.mapper.RouteMapper;
 import gps_usage.API.pojo.Point;
 import gps_usage.API.pojo.Route;
 import gps_usage.API.repository.PointRepository;
 import gps_usage.API.repository.RouteRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PointServiceImpl extends GenericServiceImpl<Point, Long> implements PointService{
     private final PointMapper mapper;
