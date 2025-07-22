@@ -11,6 +11,7 @@ public interface RouteMapper {
 //    @Mapping(source = "name", target = "name")
 //    @Mapping(source = "numberOfPoints", target = "numberOfPoints")
 //    @Mapping(source = "time", target = "time")
+    @Mapping(target = "id", ignore = true)
     Route createDTOToRoute(RouteCreateDTO createDTO);
 
 //    @Mapping(source = "id", target = "id")

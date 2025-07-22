@@ -13,11 +13,13 @@ public interface PointMapper {
 //    @Mapping(source = "longitude", target = "longitude")
 //    @Mapping(source = "latitude", target = "latitude")
 //    @Mapping(source = "time", target = "time")
+    @Mapping(target = "id", ignore = true)
     Point databaseInsertDTOToPoint(PointDatabaseInsertDTO insertDTO);
 
 //    @Mapping(source = "longitude", target = "longitude")
 //    @Mapping(source = "latitude", target = "latitude")
 //    @Mapping(source = "time", target = "time")
+    @Mapping(target = "route", ignore = true)
     PointDatabaseInsertDTO createDTOToDatabaseInsertDTO(PointCreateDTO createDTO);
 
     @Mapping(source = "route.id", target = "routeId")
