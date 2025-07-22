@@ -8,20 +8,20 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RouteMapper {
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "numberOfPoints", target = "numberOfPoints")
-    @Mapping(source = "time", target = "time")
+//    @Mapping(source = "name", target = "name")
+//    @Mapping(source = "numberOfPoints", target = "numberOfPoints")
+//    @Mapping(source = "time", target = "time")
     Route createDTOToRoute(RouteCreateDTO createDTO);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "numberOfPoints", target = "numberOfPoints")
-    @Mapping(source = "time", target = "time")
+//    @Mapping(source = "id", target = "id")
+//    @Mapping(source = "name", target = "name")
+//    @Mapping(source = "numberOfPoints", target = "numberOfPoints")
+//    @Mapping(source = "time", target = "time")
     Route DTOToRoute(RouteDTO dto);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "numberOfPoints", target = "numberOfPoints")
-    @Mapping(source = "time", target = "time")
+//    @Mapping(source = "id", target = "id")
+//    @Mapping(source = "name", target = "name")
+//    @Mapping(source = "numberOfPoints", target = "numberOfPoints")
+//    @Mapping(source = "time", target = "time")
     RouteDTO routeToDTO(Route route);
 }
