@@ -62,4 +62,127 @@ public class PointControllerIT {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].routeId").value(routeId));
     }
 
+    @Test
+    @Transactional
+    void testPost_SinglePointMissingFields() throws Exception {
+        String jsonBody = """
+                {
+                    "name": "Test",
+                    "numberOfPoints": 10,
+                    "time": "2025-07-06"
+                }
+                """;
+        String routeJSON = mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andReturn().getResponse().getContentAsString();
+        RouteDTO route = mapper.readValue(routeJSON, RouteDTO.class);
+        String routeId = route.getId().toString();
+        String jsonBodyPoint = """
+                [
+                    {
+                        "longitude": 50.444518
+                    }
+                ]
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/point/post/".concat(routeId))
+                        .contentType("application/json")
+                        .content(jsonBodyPoint))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    void testPost_MultiplePointsAllFieldsProvided() throws Exception {
+        String jsonBody = """
+                {
+                    "name": "Test",
+                    "numberOfPoints": 10,
+                    "time": "2025-07-06"
+                }
+                """;
+        String routeJSON = mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andReturn().getResponse().getContentAsString();
+        RouteDTO route = mapper.readValue(routeJSON, RouteDTO.class);
+        String routeId = route.getId().toString();
+        String jsonBodyPoint = """
+                [
+                    {
+                        "longitude": 50.444518,
+                        "latitude": 23.426729,
+                        "time": 1
+                    },
+                    {
+                        "longitude": 50.444629,
+                        "latitude": 23.426830,
+                        "time": 2
+                    },
+                    {
+                        "longitude": 50.444730,
+                        "latitude": 23.426941,
+                        "time": 3
+                    }
+                ]
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/point/post/".concat(routeId))
+                        .contentType("application/json")
+                        .content(jsonBodyPoint))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+        mockMvc.perform(MockMvcRequestBuilders.get("/point/get/".concat(routeId)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].longitude").value(50.444518))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].latitude").value(23.426729))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].time").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].routeId").value(routeId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].longitude").value(50.444629))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].latitude").value(23.426830))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].time").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].routeId").value(routeId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].longitude").value(50.444730))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].latitude").value(23.426941))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].time").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].routeId").value(routeId));
+    }
+
+    @Test
+    @Transactional
+    void testPost_MultiplePointsPartiallyMissingFields() throws Exception {
+        String jsonBody = """
+                {
+                    "name": "Test",
+                    "numberOfPoints": 10,
+                    "time": "2025-07-06"
+                }
+                """;
+        String routeJSON = mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andReturn().getResponse().getContentAsString();
+        RouteDTO route = mapper.readValue(routeJSON, RouteDTO.class);
+        String routeId = route.getId().toString();
+        String jsonBodyPoint = """
+                [
+                    {
+                        "longitude": 50.444518,
+                        "latitude": 23.426729,
+                        "time": 1
+                    },
+                    {
+                        "longitude": 50.444629
+                    },
+                    {
+                        "longitude": 50.444730,
+                        "latitude": 23.426941,
+                        "time": 3
+                    }
+                ]
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/point/post/".concat(routeId))
+                        .contentType("application/json")
+                        .content(jsonBodyPoint))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
 }
