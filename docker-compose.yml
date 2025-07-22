@@ -24,11 +24,12 @@ services:
       context: ./API
       dockerfile: Dockerfile
     container_name: gps_api
-    # environment:
-    #   DATABASE_URL: postgres://gps_user:gps_password@postgres:5432/gps_db
+    environment:
+      DB_HOST: postgres
     ports:
-      - "8000:8000"
+      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
-    restart: unless-stopped
+    # command: ["sh", "-c", "while ! nc -z postgres 5432; do sleep 2; echo 'Waiting for PostgreSQL...'; done && java -jar app.jar"]
+    # restart: unless-stopped
