@@ -30,7 +30,7 @@ public class PointController extends GenericController<Point, Long>{
     public ResponseEntity<Page<PointDTO>> getPoints(
             @PathVariable Long routeId,
             @RequestParam(defaultValue = "0") int pageNumber,
-            @RequestParam (defaultValue = "200") int pageSize) {
+            @RequestParam (defaultValue = "100") int pageSize) {
         return new ResponseEntity<>(((PointService) service).getPointsByRouteIdPaged(routeId, pageNumber, pageSize), HttpStatus.OK);
     }
 }

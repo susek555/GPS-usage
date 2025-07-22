@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "points")
 public class Point {
@@ -32,5 +33,5 @@ public class Point {
 
     @NonNull
     @Column(name = "time")
-    private LocalDateTime time;
+    private Integer time;
 }
