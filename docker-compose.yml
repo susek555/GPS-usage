@@ -19,3 +19,16 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+  api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    container_name: gps_api
+    # environment:
+    #   DATABASE_URL: postgres://gps_user:gps_password@postgres:5432/gps_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
