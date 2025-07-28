@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ktorfit)
 }
 
 android {
@@ -65,6 +66,7 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.ktorfit)
 
     implementation(libs.google.location)
     implementation(libs.serialization.json)
