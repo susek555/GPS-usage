@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import com.gps_usage.Location.LocationService
 import com.gps_usage.showCoordinates.MainScreen
+import com.gps_usage.showCoordinates.di.apiModule
 import com.gps_usage.ui.theme.GPSusageTheme
 import com.gps_usage.showCoordinates.di.locationModule
 import com.gps_usage.showCoordinates.navigation.NavigationController
@@ -133,7 +134,7 @@ class MainActivity : ComponentActivity() {
 
         startKoin{
             androidContext(this@MainActivity)
-            modules(locationModule)
+            modules(locationModule, apiModule)
         }
 
         enableEdgeToEdge()

@@ -8,6 +8,8 @@ import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfig
 import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfigState
 import com.gps_usage.showCoordinates.dialogFactory.RouteDialogFactory
 import com.gps_usage.showCoordinates.dialogFactory.RouteDialogState
+import com.gps_usage.showCoordinates.repositories.PointRepository
+import com.gps_usage.showCoordinates.repositories.RouteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
