@@ -3,18 +3,20 @@ package com.gps_usage.showCoordinates.repositories
 import app.src.main.java.com.gps_usage.showCoordinates.api.data.RouteApi
 import com.gps_usage.showCoordinates.data.Route
 import com.gps_usage.showCoordinates.data.apiAssociated.PostRouteDTO
+import com.gps_usage.showCoordinates.exceptions.RouteUploadFailed
+
+typealias RouteID = Long
 
 class RouteRepository(private val api: RouteApi) {
 
     // returns new route ID
-    suspend fun postRoute(route: Route) : Long? {
+    suspend fun postRoute(route: Route) : RouteID {
+        val routeToPost = convertRouteToPost(route)
         try {
-            val routeToPost = convertRouteToPost(route)
             val postedRoute = api.postRoute(routeToPost)
             return postedRoute.id
         } catch (e: Exception) {
-            e.printStackTrace()
-            return null
+            throw RouteUploadFailed("Route header upload failed with name: ${route.name}", e)
         }
     }
 

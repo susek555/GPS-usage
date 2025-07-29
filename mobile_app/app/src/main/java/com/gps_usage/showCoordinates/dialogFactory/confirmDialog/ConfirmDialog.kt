@@ -1,4 +1,4 @@
-package com.gps_usage.showCoordinates.dialogFactory
+package com.gps_usage.showCoordinates.dialogFactory.confirmDialog
 
 
 import androidx.compose.material3.AlertDialog
@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 
 @Composable
-fun RouteDialog(
-    config: RouteDialogConfig
+fun ConfirmDialog(
+    config: ConfirmDialogConfig
 ){
     var inputText by remember { mutableStateOf(config.baseTextState) }
 

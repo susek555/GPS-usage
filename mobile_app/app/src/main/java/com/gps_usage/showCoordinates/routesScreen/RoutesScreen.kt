@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -19,9 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialog
+import com.gps_usage.R
+import com.gps_usage.showCoordinates.data.Route
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialog
+import com.gps_usage.showCoordinates.dialogFactory.infoDialog.InfoDialog
 import com.gps_usage.showCoordinates.utils.formatDateOnly
 
 @Composable
@@ -30,14 +35,29 @@ fun RoutesScreen(
     viewModel: RoutesViewModel
 ){
     val routes by viewModel.routes.collectAsState()
-    val routeDialogState by viewModel.routeDialogState.collectAsState()
+    val confirmDialogState by viewModel.confirmDialogState.collectAsState()
+    val infoDialogState by viewModel.infoDialogState.collectAsState()
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = displayMainScreen
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("BACK")
+                FloatingActionButton(
+                    onClick = {
+                        viewModel.onEvent(RoutesScreenEvent.ShowChangeIPDialog)
+                    }
+                ) {
+                    Text("Change IP")
+                }
+                FloatingActionButton(
+                    onClick = displayMainScreen
+                ) {
+                    Text("BACK")
+                }
             }
         }
     ) { padding ->
@@ -72,6 +92,16 @@ fun RoutesScreen(
                     }
                     IconButton(
                         onClick = {
+                            viewModel.onEvent(RoutesScreenEvent.ShowUploadRouteDialog(route))
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_file_upload_24),
+                            contentDescription = "Upload route"
+                        )
+                    }
+                    IconButton(
+                        onClick = {
                             viewModel.onEvent(RoutesScreenEvent.ShowDeleteRouteDialog(route))
                         }
                     ) {
@@ -84,7 +114,10 @@ fun RoutesScreen(
             }
         }
     }
-    if(routeDialogState.isVisible){
-        RouteDialog(routeDialogState.config!!)
+    if(confirmDialogState.isVisible) {
+        ConfirmDialog(confirmDialogState.config!!)
+    }
+    if(infoDialogState.isVisible) {
+        InfoDialog(infoDialogState.config!!)
     }
 }

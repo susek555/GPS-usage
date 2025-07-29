@@ -16,7 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialog
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialog
 import com.gps_usage.showCoordinates.utils.formatTime
 
 @Composable
@@ -122,6 +122,6 @@ fun MainScreen(
         }
     }
     if(stopRouteDialogState.isVisible){
-        RouteDialog(stopRouteDialogState.config!!)
+        ConfirmDialog(stopRouteDialogState.config!!)
     }
 }

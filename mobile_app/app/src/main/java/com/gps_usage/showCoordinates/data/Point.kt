@@ -22,5 +22,5 @@ data class Point(
     val routeId: Long,
     val latitude: Double,
     val longitude: Double,
-    val time: Long
+    val time: Long //TODO change type here to Int
 )

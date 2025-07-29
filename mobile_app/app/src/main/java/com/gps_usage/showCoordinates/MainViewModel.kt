@@ -8,10 +8,10 @@ import com.gps_usage.showCoordinates.data.Point
 import com.gps_usage.showCoordinates.data.PointsDao
 import com.gps_usage.showCoordinates.data.Route
 import com.gps_usage.showCoordinates.data.RoutesDao
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfig
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogFactory
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfigState
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogState
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogConfig
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogFactory
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogConfigState
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,18 +45,18 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
     val numberOfPointsOnRoute: StateFlow<Long> get() = _numberOfPointsOnRoute
     private val minimumNumberOfPoints = 10
 
-    private val dialogFactory = RouteDialogFactory()
+    private val dialogFactory = ConfirmDialogFactory()
     private val _isStopRouteDialogOpen = MutableStateFlow(false)
-    private val _stopRouteDialogConfig = MutableStateFlow<RouteDialogConfig?>(
+    private val _stopRouteDialogConfig = MutableStateFlow<ConfirmDialogConfig?>(
         dialogFactory.create(
-            RouteDialogConfigState.None,
+            ConfirmDialogConfigState.None,
             onConfirm = {},
             onDismiss = {}
         )
     )
     val stopRouteDialogState = combine(_isStopRouteDialogOpen, _stopRouteDialogConfig) {isVisible, config ->
-        RouteDialogState(isVisible, config)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RouteDialogState(false, null))
+        ConfirmDialogState(isVisible, config)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ConfirmDialogState(false, null))
 
     fun onEvent(event: MainScreenEvent) {
         when(event) {
@@ -102,13 +102,13 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
     private fun setDialogConfig() {
         if(numberOfPointsOnRoute.value < minimumNumberOfPoints){
             _stopRouteDialogConfig.value = dialogFactory.create(
-                RouteDialogConfigState.NotLongEnough,
+                ConfirmDialogConfigState.RouteNotLongEnough,
                 onConfirm = { onEvent(MainScreenEvent.CancelRoute)},
                 onDismiss = { onEvent(MainScreenEvent.HideStopRouteDialog)}
             )
         } else {
             _stopRouteDialogConfig.value = dialogFactory.create(
-                RouteDialogConfigState.AskForName,
+                ConfirmDialogConfigState.RouteAskForName,
                 onConfirm = { name -> onEvent(MainScreenEvent.SaveRoute(name!!))},
                 onDismiss = { onEvent(MainScreenEvent.HideStopRouteDialog)}
             )

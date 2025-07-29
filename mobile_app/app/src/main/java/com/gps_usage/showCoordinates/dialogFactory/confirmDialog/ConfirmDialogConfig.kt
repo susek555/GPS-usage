@@ -1,6 +1,6 @@
-package com.gps_usage.showCoordinates.dialogFactory
+package com.gps_usage.showCoordinates.dialogFactory.confirmDialog
 
-data class RouteDialogConfig (
+data class ConfirmDialogConfig (
     val mainText: String,
     val hasTextField: Boolean = false,
     val textFieldShadowText: String = "",

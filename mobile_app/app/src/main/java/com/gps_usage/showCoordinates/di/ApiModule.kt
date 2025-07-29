@@ -12,7 +12,8 @@ fun createApiModule(baseUrl: String) = module {
     single { get<DataServiceCreator>().createPointApi() }
 }
 
-fun changeBaseUrl(newUrl: String) {
+fun changeBaseIP(newIP: String) {
+    val newUrl = "http://$newIP:8080/"
     val koin = GlobalContext.get()
     koin.unloadModules(listOf(apiModule))
     apiModule = createApiModule(newUrl)

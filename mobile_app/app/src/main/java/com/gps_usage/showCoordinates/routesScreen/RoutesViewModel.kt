@@ -2,15 +2,22 @@ package com.gps_usage.showCoordinates.routesScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gps_usage.showCoordinates.data.PointsDao
 import com.gps_usage.showCoordinates.data.Route
 import com.gps_usage.showCoordinates.data.RoutesDao
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfig
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogConfigState
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogFactory
-import com.gps_usage.showCoordinates.dialogFactory.RouteDialogState
+import com.gps_usage.showCoordinates.di.changeBaseIP
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogConfig
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogConfigState
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogFactory
+import com.gps_usage.showCoordinates.dialogFactory.confirmDialog.ConfirmDialogState
+import com.gps_usage.showCoordinates.dialogFactory.infoDialog.InfoDialogConfig
+import com.gps_usage.showCoordinates.dialogFactory.infoDialog.InfoDialogConfigState
+import com.gps_usage.showCoordinates.dialogFactory.infoDialog.InfoDialogFactory
+import com.gps_usage.showCoordinates.dialogFactory.infoDialog.InfoDialogState
 import com.gps_usage.showCoordinates.repositories.PointRepository
 import com.gps_usage.showCoordinates.repositories.RouteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,9 +33,13 @@ import javax.inject.Inject
 @HiltViewModel
 class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
     private val routesDao: RoutesDao by inject()
+    private val pointsDao: PointsDao by inject()
 
     private val _routes = MutableStateFlow<List<Route>>(emptyList())
     val routes: StateFlow<List<Route>> = _routes.asStateFlow()
+
+    private val _uploadProgressState = MutableStateFlow<Int>(0)
+    val uploadProgressState: Flow<Int> = _uploadProgressState.asStateFlow()
 
     init {
         loadRoutes()
@@ -40,18 +51,29 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
         }
     }
 
-    private val dialogFactory = RouteDialogFactory()
-    private val _isRouteDialogOpen = MutableStateFlow(false)
-    private val _routeDialogConfig = MutableStateFlow<RouteDialogConfig?>(
-        dialogFactory.create(
-            RouteDialogConfigState.None,
+    private val confirmDialogFactory = ConfirmDialogFactory()
+    private val _isConfirmDialogOpen = MutableStateFlow(false)
+    private val _confirmDialogConfig = MutableStateFlow<ConfirmDialogConfig?>(
+        confirmDialogFactory.create(
+            ConfirmDialogConfigState.None,
             onConfirm = {},
             onDismiss = {}
         )
     )
-    val routeDialogState = combine(_isRouteDialogOpen, _routeDialogConfig) { isVisible, config ->
-        RouteDialogState(isVisible, config)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RouteDialogState(false, null))
+    val confirmDialogState = combine(_isConfirmDialogOpen, _confirmDialogConfig) { isVisible, config ->
+        ConfirmDialogState(isVisible, config)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ConfirmDialogState(false, null))
+
+    private val infoDialogFactory = InfoDialogFactory()
+    private val _isInfoDialogOpen = MutableStateFlow(false)
+    private val _infoDialogConfig = MutableStateFlow<InfoDialogConfig?>(
+        infoDialogFactory.create(
+            InfoDialogConfigState.None
+        )
+    )
+    val infoDialogState = combine(_isInfoDialogOpen, _infoDialogConfig) { isVisible, config ->
+        InfoDialogState(isVisible, config)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InfoDialogState(false, null))
 
     fun onEvent(event: RoutesScreenEvent) {
         when(event) {
@@ -60,7 +82,7 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
                     routesDao.deleteRoute(event.route)
                     _routes.value = routesDao.getAllRoutes()
                 }
-                _isRouteDialogOpen.value = false
+                _isConfirmDialogOpen.value = false
             }
             is RoutesScreenEvent.EditRoute -> {
                 val updatedRoute = event.route.copy(name = event.name)
@@ -68,40 +90,143 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
                     routesDao.updateRoute(updatedRoute)
                     _routes.value = routesDao.getAllRoutes()
                 }
-                _isRouteDialogOpen.value = false
+                _isConfirmDialogOpen.value = false
             }
-            RoutesScreenEvent.HideRouteDialog -> {
-                _isRouteDialogOpen.value = false
+            is RoutesScreenEvent.UploadRoute -> {
+                //dependencies injection
+                val routeRepository: RouteRepository by inject()
+                val pointRepository: PointRepository by inject()
+
+                //show progress dialog
+                _isConfirmDialogOpen.value = false
+                setInfoDialogConfig(
+                    InfoDialogConfigEnum.UPLOADING,
+                    route = event.route
+                )
+                _isInfoDialogOpen.value = true
+
+                //upload data
+                try {
+                    viewModelScope.launch {
+                        launch {
+                            pointRepository.progressState.collect { progress ->
+                                _uploadProgressState.value = progress
+                            }
+                        }
+                        val newRouteId = routeRepository.postRoute(event.route)
+                        pointRepository.postPoints(
+                            newRouteId,
+                            pointsDao.getPointsForRoute(event.route.id).first()
+                        )
+                    }
+                } catch (e: Exception) {
+                    setInfoDialogConfig(
+                        InfoDialogConfigEnum.ERROR,
+                        errorMessage = e.message
+                    )
+                }
+                //show success dialog
+                setInfoDialogConfig(
+                    InfoDialogConfigEnum.SUCCESS,
+                    route = event.route
+                )
+            }
+            RoutesScreenEvent.HideConfirmDialog -> {
+                _isConfirmDialogOpen.value = false
             }
             is RoutesScreenEvent.ShowEditRouteDialog -> {
-                setDialogConfig(DialogConfig.EDIT, event.route)
-                _isRouteDialogOpen.value = true
+                setConfirmDialogConfig(ConfirmDialogConfigEnum.EDIT, event.route)
+                _isConfirmDialogOpen.value = true
             }
             is RoutesScreenEvent.ShowDeleteRouteDialog -> {
-                setDialogConfig(DialogConfig.DELETE, event.route)
-                _isRouteDialogOpen.value = true
+                setConfirmDialogConfig(ConfirmDialogConfigEnum.DELETE, event.route)
+                _isConfirmDialogOpen.value = true
+            }
+            is RoutesScreenEvent.ChangeIP -> {
+                changeBaseIP(event.newIP)
+                _isConfirmDialogOpen.value = false
+            }
+            RoutesScreenEvent.ShowChangeIPDialog -> {
+                setConfirmDialogConfig(ConfirmDialogConfigEnum.CHANGEIP)
+                _isConfirmDialogOpen.value = true
+            }
+            is RoutesScreenEvent.ShowUploadRouteDialog -> {
+                setConfirmDialogConfig(ConfirmDialogConfigEnum.UPLOAD, event.route)
+                _isConfirmDialogOpen.value = true
+            }
+            RoutesScreenEvent.HideInfoDialog -> {
+                _isInfoDialogOpen.value = false
             }
         }
     }
 
-    private enum class DialogConfig {
-        EDIT, DELETE
+    private enum class ConfirmDialogConfigEnum {
+        EDIT, DELETE, CHANGEIP, UPLOAD
     }
 
-    private fun setDialogConfig(config: DialogConfig, route: Route) {
-        if(config == DialogConfig.EDIT){
-            _routeDialogConfig.value = dialogFactory.create(
-                RouteDialogConfigState.EditRoute,
-                onConfirm = { name -> onEvent(RoutesScreenEvent.EditRoute(route, name!!))},
-                onDismiss = { onEvent(RoutesScreenEvent.HideRouteDialog)},
-                baseTextState = route.name
-            )
-        } else {
-            _routeDialogConfig.value = dialogFactory.create(
-                RouteDialogConfigState.DeleteRoute,
-                onConfirm = { onEvent(RoutesScreenEvent.DeleteRoute(route))},
-                onDismiss = { onEvent(RoutesScreenEvent.HideRouteDialog)}
-            )
+    private enum class InfoDialogConfigEnum {
+        UPLOADING, ERROR, SUCCESS
+    }
+
+    private fun setConfirmDialogConfig(config: ConfirmDialogConfigEnum, route: Route? = null) {
+        when (config) {
+            ConfirmDialogConfigEnum.EDIT -> {
+                _confirmDialogConfig.value = confirmDialogFactory.create(
+                    ConfirmDialogConfigState.EditRoute,
+                    onConfirm = { name -> onEvent(RoutesScreenEvent.EditRoute(route!!, name!!))},
+                    onDismiss = { onEvent(RoutesScreenEvent.HideConfirmDialog)},
+                    baseTextState = route!!.name
+                )
+            }
+            ConfirmDialogConfigEnum.DELETE -> {
+                _confirmDialogConfig.value = confirmDialogFactory.create(
+                    ConfirmDialogConfigState.DeleteRoute,
+                    onConfirm = { onEvent(RoutesScreenEvent.DeleteRoute(route!!))},
+                    onDismiss = { onEvent(RoutesScreenEvent.HideConfirmDialog)},
+                    routeName = route!!.name
+                )
+            }
+            ConfirmDialogConfigEnum.UPLOAD -> {
+                _confirmDialogConfig.value = confirmDialogFactory.create(
+                    ConfirmDialogConfigState.UploadRoute,
+                    onConfirm = { onEvent(RoutesScreenEvent.UploadRoute(route!!))},
+                    onDismiss = { onEvent(RoutesScreenEvent.HideConfirmDialog)},
+                    routeName = route!!.name
+                )
+            }
+            ConfirmDialogConfigEnum.CHANGEIP -> {
+                _confirmDialogConfig.value = confirmDialogFactory.create(
+                    ConfirmDialogConfigState.ChangeIP,
+                    onConfirm = { newIP -> onEvent(RoutesScreenEvent.ChangeIP(newIP!!))},
+                    onDismiss = { onEvent(RoutesScreenEvent.HideConfirmDialog)}
+                )
+            }
+        }
+    }
+
+    private fun setInfoDialogConfig(config: InfoDialogConfigEnum, route: Route? = null, errorMessage: String? = null) {
+        when (config) {
+            InfoDialogConfigEnum.UPLOADING -> {
+                _infoDialogConfig.value = infoDialogFactory.create(
+                    InfoDialogConfigState.UploadingRoute,
+                    progressBarFlow = uploadProgressState,
+                    routeName = route!!.name
+                )
+            }
+            InfoDialogConfigEnum.ERROR -> {
+                _infoDialogConfig.value = infoDialogFactory.create(
+                    InfoDialogConfigState.FailedToUploadRoute,
+                    onDismiss = { onEvent(RoutesScreenEvent.HideInfoDialog)},
+                    errorMessage = errorMessage!!
+                )
+            }
+            InfoDialogConfigEnum.SUCCESS -> {
+                _infoDialogConfig.value = infoDialogFactory.create(
+                    InfoDialogConfigState.RouteUploadSuccess,
+                    onDismiss = { onEvent(RoutesScreenEvent.HideInfoDialog)},
+                    routeName = route!!.name
+                )
+            }
         }
     }
 }
