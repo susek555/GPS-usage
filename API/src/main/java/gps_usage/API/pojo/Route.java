@@ -22,7 +22,7 @@ public class Route {
     private String name;
 
     @NonNull
-    @Column(name = "numberOfPoints")
+    @Column(name = "numberofpoints")
     private Integer numberOfPoints;
 
     @NonNull

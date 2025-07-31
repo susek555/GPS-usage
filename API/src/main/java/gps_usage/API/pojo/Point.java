@@ -21,7 +21,7 @@ public class Point {
 
     @NonNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "routeId", referencedColumnName = "id")
+    @JoinColumn(name = "routeid", referencedColumnName = "id")
     private Route route;
 
     @NonNull
