@@ -77,6 +77,7 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InfoDialogState(false, null))
 
     //TODO cache input IP
+    //TODO show current ip in input field
 
     fun onEvent(event: RoutesScreenEvent) {
         when(event) {

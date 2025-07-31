@@ -25,7 +25,7 @@ class PointRepository(private val api: PointApi) {
                 api.postPoints(routeId, pointsPage)
                 _progressState.value = ((i + 1).toFloat() / totalPages * 100).toInt()
             } catch (e: Exception) {
-                throw RouteUploadFailed("Route content upload failed on page $i / $totalPages", e)
+                throw RouteUploadFailed("Route content upload failed on page $i / $totalPages...", e)
             }
         }
         _progressState.value = 0
