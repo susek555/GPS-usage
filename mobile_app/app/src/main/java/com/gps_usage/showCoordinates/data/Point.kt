@@ -3,7 +3,7 @@ package com.gps_usage.showCoordinates.data
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
 
 @Entity(
     tableName = "points",
@@ -16,11 +16,12 @@ import kotlinx.datetime.LocalDateTime
         )
     ]
 )
+@Serializable
 data class Point(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val routeId: Long,
     val latitude: Double,
     val longitude: Double,
-    val time: Long //TODO change type here to Int
+    val time: Int //was Long
 )

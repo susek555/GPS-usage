@@ -15,12 +15,12 @@ class PointRepository(private val api: PointApi) {
 
     suspend fun postPoints(routeId: Long, points: List<Point>) {
         val pointsToPost = convertPointsToPost(points)
-        val totalPages = (pointsToPost.size + pageSize - 1) / pageSize
-        for (i in 0..totalPages) {
+        val totalPages = (pointsToPost.size + pageSize) / pageSize
+        for (i in 1..totalPages) {
             try {
                 val pointsPage = pointsToPost.subList(
-                    fromIndex = i * pageSize,
-                    toIndex = minOf((i + 1) * pageSize, pointsToPost.size)
+                    fromIndex = (i - 1) * pageSize,
+                    toIndex = minOf(i * pageSize, pointsToPost.size)
                 )
                 api.postPoints(routeId, pointsPage)
                 _progressState.value = ((i + 1).toFloat() / totalPages * 100).toInt()

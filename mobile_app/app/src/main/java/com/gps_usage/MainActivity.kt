@@ -21,10 +21,13 @@ import com.gps_usage.showCoordinates.MainScreen
 import com.gps_usage.showCoordinates.di.apiModule
 import com.gps_usage.ui.theme.GPSusageTheme
 import com.gps_usage.showCoordinates.di.locationModule
+import com.gps_usage.showCoordinates.di.repositoryModule
 import com.gps_usage.showCoordinates.navigation.NavigationController
 import dagger.hilt.android.AndroidEntryPoint
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.logger.AndroidLogger
 import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.logger.Level
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -134,7 +137,10 @@ class MainActivity : ComponentActivity() {
 
         startKoin{
             androidContext(this@MainActivity)
-            modules(locationModule, apiModule)
+            koin.setProperty("baseUrl", "http://default-ip:8080/")
+            modules(locationModule, apiModule, repositoryModule)
+
+            logger(AndroidLogger(Level.DEBUG))
         }
 
         enableEdgeToEdge()

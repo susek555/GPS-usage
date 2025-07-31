@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -43,13 +44,14 @@ fun RoutesScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(start = 32.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 FloatingActionButton(
                     onClick = {
                         viewModel.onEvent(RoutesScreenEvent.ShowChangeIPDialog)
-                    }
+                    },
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 ) {
                     Text("Change IP")
                 }
@@ -82,11 +84,11 @@ fun RoutesScreen(
                             fontSize = 20.sp
                         )
                         Text(
-                            text = formatDateOnly(route.time),
+                            text = route.time.toString(),
                             fontSize = 12.sp
                         )
                         Text(
-                            text = formatDateOnly(route.time),
+                            text = route.time.toString(),
                             fontSize = 12.sp
                         )
                     }

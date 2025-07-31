@@ -17,6 +17,7 @@ import com.gps_usage.showCoordinates.dialogFactory.infoDialog.InfoDialogState
 import com.gps_usage.showCoordinates.repositories.PointRepository
 import com.gps_usage.showCoordinates.repositories.RouteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -39,7 +40,7 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
     val routes: StateFlow<List<Route>> = _routes.asStateFlow()
 
     private val _uploadProgressState = MutableStateFlow<Int>(0)
-    val uploadProgressState: Flow<Int> = _uploadProgressState.asStateFlow()
+    private val uploadProgressState: Flow<Int> = _uploadProgressState.asStateFlow()
 
     init {
         loadRoutes()
@@ -75,6 +76,8 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
         InfoDialogState(isVisible, config)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InfoDialogState(false, null))
 
+    //TODO cache input IP
+
     fun onEvent(event: RoutesScreenEvent) {
         when(event) {
             is RoutesScreenEvent.DeleteRoute -> {
@@ -106,30 +109,30 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
                 _isInfoDialogOpen.value = true
 
                 //upload data
-                try {
-                    viewModelScope.launch {
-                        launch {
-                            pointRepository.progressState.collect { progress ->
-                                _uploadProgressState.value = progress
-                            }
+                viewModelScope.launch {
+                    launch {
+                        pointRepository.progressState.collect { progress ->
+                            _uploadProgressState.value = progress
                         }
+                    }
+                    try {
                         val newRouteId = routeRepository.postRoute(event.route)
                         pointRepository.postPoints(
                             newRouteId,
                             pointsDao.getPointsForRoute(event.route.id).first()
                         )
+                        //show success dialog
+                        setInfoDialogConfig(
+                            InfoDialogConfigEnum.SUCCESS,
+                            route = event.route
+                        )
+                    } catch (e: Exception) {
+                        setInfoDialogConfig(
+                            InfoDialogConfigEnum.ERROR,
+                            errorMessage = e.message
+                        )
                     }
-                } catch (e: Exception) {
-                    setInfoDialogConfig(
-                        InfoDialogConfigEnum.ERROR,
-                        errorMessage = e.message
-                    )
                 }
-                //show success dialog
-                setInfoDialogConfig(
-                    InfoDialogConfigEnum.SUCCESS,
-                    route = event.route
-                )
             }
             RoutesScreenEvent.HideConfirmDialog -> {
                 _isConfirmDialogOpen.value = false
@@ -218,6 +221,7 @@ class RoutesViewModel @Inject constructor()  : ViewModel(), KoinComponent {
                     InfoDialogConfigState.FailedToUploadRoute,
                     onDismiss = { onEvent(RoutesScreenEvent.HideInfoDialog)},
                     errorMessage = errorMessage!!
+//                    errorMessage = errorMessage ?: "unknown error"
                 )
             }
             InfoDialogConfigEnum.SUCCESS -> {

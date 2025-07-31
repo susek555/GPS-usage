@@ -2,21 +2,28 @@ package com.gps_usage.showCoordinates.di
 
 import com.gps_usage.showCoordinates.api.data.DataServiceCreator
 import org.koin.core.context.GlobalContext
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
-var apiModule = createApiModule("temp value to be replaced")
+// Koin properties key
+private const val BASE_URL_KEY = "baseUrl"
 
-fun createApiModule(baseUrl: String) = module {
-    single { DataServiceCreator(baseUrl) }
-    single { get<DataServiceCreator>().createRouteApi() }
-    single { get<DataServiceCreator>().createPointApi() }
+// API module
+val apiModule: Module = module {
+
+    factory {
+        val baseUrl = getProperty(BASE_URL_KEY) ?: "http://default-ip:8080/"
+        DataServiceCreator(baseUrl)
+    }
+
+    factory { get<DataServiceCreator>().createRouteApi() }
+    factory { get<DataServiceCreator>().createPointApi() }
 }
 
 fun changeBaseIP(newIP: String) {
-    val newUrl = "http://$newIP:8080/"
     val koin = GlobalContext.get()
-    koin.unloadModules(listOf(apiModule))
-    apiModule = createApiModule(newUrl)
-    koin.loadModules(listOf(apiModule))
+    val newUrl = "http://$newIP:8080/"
+    koin.setProperty(BASE_URL_KEY, newUrl)
+    println("new url = $newUrl")
 }
 

@@ -22,8 +22,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,8 +47,8 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
 
     private var currentRoute: MutableState<Route?> = mutableStateOf(null)
 
-    private val _numberOfPointsOnRoute = MutableStateFlow<Long>(0)
-    val numberOfPointsOnRoute: StateFlow<Long> get() = _numberOfPointsOnRoute
+    private val _numberOfPointsOnRoute = MutableStateFlow<Int>(0)
+    val numberOfPointsOnRoute: StateFlow<Int> get() = _numberOfPointsOnRoute
     private val minimumNumberOfPoints = 10
 
     private val dialogFactory = ConfirmDialogFactory()
@@ -122,7 +128,7 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
             routeId = currentRoute.value!!.id,
             longitude = longitude,
             latitude = latitude,
-            time = System.currentTimeMillis() - startTime!!
+            time = (System.currentTimeMillis() - startTime!!).toInt()
         )
         pointsDao.upsertPoint(newPoint)
         _numberOfPointsOnRoute.value += 1
@@ -131,10 +137,13 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
     private suspend fun startNewRoute(){
         //TODO remove prints
         println("new route started")
+        val localDate = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
         currentRoute.value = Route(
             name = "",
             numberOfPoints = 0,
-            time = System.currentTimeMillis()
+            time = localDate
         )
         currentRoute.value!!.id = routesDao.insertRoute(currentRoute.value!!)
         println("route id = " + currentRoute.value!!.id)
@@ -152,8 +161,8 @@ class MainViewModel @Inject constructor() : ViewModel(), KoinComponent {
         //TODO if points < 10 - show dialog and delete route
         println("route stopped")
         println(name)
+        routesDao.updateRoute(currentRoute.value!!.copy(name = name, numberOfPoints = _numberOfPointsOnRoute.value))
         _numberOfPointsOnRoute.value = 0
-        routesDao.updateRoute(currentRoute.value!!.copy(name = name))
     }
 
     // timer
