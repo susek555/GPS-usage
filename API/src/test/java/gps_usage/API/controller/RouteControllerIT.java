@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isA;
 
 @ActiveProfiles("test")
@@ -215,13 +216,69 @@ public class RouteControllerIT {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].name").value("Test1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].numberOfPoints").value(11))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].time").value("2025-07-07"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id", isA(Number.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].id", isA(Number.class)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].name").value("Test2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].numberOfPoints").value(12))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].time").value("2025-07-08"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id", isA(Number.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].id", isA(Number.class)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].name").value("Test3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].numberOfPoints").value(13))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].time").value("2025-07-09"));
+    }
+
+    @Test
+    void testGetAll_Pages() throws Exception {
+        String jsonBody1 = """
+                {
+                    "name": "Test1",
+                    "numberOfPoints": 11,
+                    "time": "2025-07-07"
+                }
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                .contentType("application/json")
+                .content(jsonBody1));
+        String jsonBody2 = """
+                {
+                    "name": "Test2",
+                    "numberOfPoints": 12,
+                    "time": "2025-07-08"
+                }
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                .contentType("application/json")
+                .content(jsonBody2));
+        String jsonBody3 = """
+                {
+                    "name": "Test3",
+                    "numberOfPoints": 13,
+                    "time": "2025-07-09"
+                }
+                """;
+        mockMvc.perform(MockMvcRequestBuilders.post("/route/post")
+                .contentType("application/json")
+                .content(jsonBody3));
+        mockMvc.perform(MockMvcRequestBuilders.get("/route/get/all")
+                        .param("pageNumber", "0")
+                        .param("pageSize", "2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id", isA(Number.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].name").value("Test1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].numberOfPoints").value(11))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].time").value("2025-07-07"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].id", isA(Number.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].name").value("Test2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].numberOfPoints").value(12))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].time").value("2025-07-08"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/route/get/all")
+                        .param("pageNumber", "1")
+                        .param("pageSize", "2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id", isA(Number.class)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].name").value("Test3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].numberOfPoints").value(13))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].time").value("2025-07-09"));
     }
 }
