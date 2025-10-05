@@ -31,5 +31,18 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    # command: ["sh", "-c", "while ! nc -z postgres 5432; do sleep 2; echo 'Waiting for PostgreSQL...'; done && java -jar app.jar"]
-    # restart: unless-stopped
+    restart: unless-stopped
+  web_app:
+    build:
+      context: ./gps-web-app
+      dockerfile: Dockerfile
+    container_name: gps_web_app
+    environment:
+      API_URL: http://localhost:8080
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+      URL: http://localhost:3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
