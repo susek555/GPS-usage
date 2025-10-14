@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   const data = await response.json();
+  console.log("Fetched routes data (NEXT_API):", data);
 
   return Response.json({
     pagination,

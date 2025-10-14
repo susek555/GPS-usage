@@ -7,11 +7,13 @@ export async function fetchAllRoutes(pagination: Pagination) : Promise<{paginati
     pageSize: pagination.pageSize.toString(),
   });
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/route/get/all?${params.toString()}`);
+  const response = await fetch(`/api/route/get/all?${params.toString()}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch routes");
   }
+
+  console.log("Fetch all routes response (FETCHER):", response);
 
   return response.json();
 }
