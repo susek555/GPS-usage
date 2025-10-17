@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Pagination } from "@/lib/definitions/utils/pagination";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+    req: NextRequest,
+    { params }: { params: { routeId: string } }
+) {
   const { searchParams } = new URL(req.url);
   const pageNumber = Number(searchParams.get("pageNumber") || 0);
-  const pageSize = Number(searchParams.get("pageSize") || 20);
+  const pageSize = Number(searchParams.get("pageSize") || 100);
+  const { routeId } = await params;
 
   const pagination: Pagination = { pageNumber, pageSize };
 
-  const response = await fetch(`${process.env.API_URL}/route/get/all?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+  const response = await fetch(`${process.env.API_URL}/point/get/${routeId}?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
@@ -23,6 +27,6 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     pagination,
-    routes: data.content || [],
+    points: data.content || [],
   });
 }
