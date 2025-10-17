@@ -17,7 +17,9 @@ export default function RouteList() {
       <h2>Routes</h2>
       <ul>
         {routes.map(route => (
-          <li key={route.id}>{route.name}</li>
+            <li key={route.id}>
+            <a href={`/route/${route.id}`}>{route.name}</a>
+            </li>
         ))}
       </ul>
       <button onClick={() => setPageNumber(p => p + 1)}>Next page</button>

@@ -17,3 +17,15 @@ export async function fetchAllRoutes(pagination: Pagination) : Promise<{paginati
 
   return response.json();
 }
+
+export async function fetchRoute(id: number){
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/route/get/${id}`);
+
+  // if (!response.ok) {
+  //   throw new Error("Failed to fetch route");
+  // }
+
+  console.log("Fetched route (FETCHER):", response )
+
+  return response.json()
+}

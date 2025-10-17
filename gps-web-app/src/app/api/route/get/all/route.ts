@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Pagination } from "@/lib/definitions/utils/pagination";
 
 export async function GET(req: NextRequest) {
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   const data = await response.json();
   console.log("Fetched routes data (NEXT_API):", data);
 
-  return Response.json({
+  return NextResponse.json({
     pagination,
     routes: data.content || [],
   });
