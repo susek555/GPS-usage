@@ -2,9 +2,9 @@ import { RouteInfo } from "./RouteInfo"
 import { Route } from "@/lib/definitions/data/route"
 import { Point } from "@/lib/definitions/data/point";
 import { fetchRoute, fetchRoutePoints } from "@/lib/data/route/fetchers";
+import ClientMap from "./ClientMap"; // ← Używamy wrappera
 
-export default async function RouteView(props: {params: Promise<{id: string }>}) {
-    const params = props.params
+export default async function RouteView({ params }: {params: Promise<{id: string }>}) {
     const id = (await params).id
 
     const route: Route = await fetchRoute(parseInt(id))
@@ -13,8 +13,9 @@ export default async function RouteView(props: {params: Promise<{id: string }>})
     return(
         <>
             <RouteInfo route={route}/>
-            <div className="mt-4">
-                <h3 className="text-lg font-semibold mb-2">Route Points</h3>
+            <div className="mt-4"/>
+            <ClientMap points={points} />
+                {/* <h3 className="text-lg font-semibold mb-2">Route Points</h3>
                 {points.length > 0 ? (
                     <ul className="space-y-2">
                         {points.map(point => (
@@ -26,7 +27,7 @@ export default async function RouteView(props: {params: Promise<{id: string }>})
                 ) : (
                     <p className="text-gray-500">No points available for this route</p>
                 )}
-            </div>
+            </div> */}
         </>
     )
 }
